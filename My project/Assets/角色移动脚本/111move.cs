@@ -9,6 +9,9 @@ public class ThirdPersonController : MonoBehaviour
     public float moveSpeed = 5f;
     public float rotationSpeed = 10f;
     public float gravity = -9.8f;
+    public bool useRootMotion = true;
+    public float jumpHeight = 2f;  // 跳跃高度
+    public float jumpForce = 5f;   // 跳跃力
 
     [Header("References")]
     public Transform cameraTransform;
@@ -17,6 +20,13 @@ public class ThirdPersonController : MonoBehaviour
 
     private CharacterController controller;
     private Vector3 velocity;
+    private bool Jumping = false;
+
+    // =========================
+    // 🟢 允许跳跃的动画
+    // =========================
+    [Header("Jump Settings")]
+    public AnimationClip[] allowedJumpAnimations; // 允许跳跃的动画Clip
 
     void Start()
     {
@@ -29,7 +39,23 @@ public class ThirdPersonController : MonoBehaviour
     void Update()
     {
         HandleMovement();
+    
         ApplyGravity();
+
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;  // 使角色立刻落地
+            Jumping = false;   // 重置Jumping状态
+        }
+
+        // 检查当前的动画状态
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+        // 如果当前动画是允许的跳跃动画，才允许跳跃
+        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed(currentState))
+        {
+            Jump();
+        }
     }
 
     void HandleMovement()
@@ -39,14 +65,14 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 moveDir = HandleFreeMovement(h, v);
 
-        controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        if (!useRootMotion)
+        {
+            controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        }
 
         UpdateAnimator(h, v, moveDir);
     }
 
-    // =========================
-    // 🟢 自由状态
-    // =========================
     Vector3 HandleFreeMovement(float h, float v)
     {
         Vector3 camForward = cameraTransform.forward;
@@ -60,7 +86,6 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 moveDir = camForward * v + camRight * h;
 
-        // 有输入才转向
         if (moveDir.magnitude > 0.1f)
         {
             Quaternion targetRot = Quaternion.LookRotation(moveDir);
@@ -74,35 +99,56 @@ public class ThirdPersonController : MonoBehaviour
         return moveDir.normalized;
     }
 
-    // =========================
-    // 🎬 Animator同步
-    // =========================
     void UpdateAnimator(float h, float v, Vector3 moveDir)
     {
         if (animator == null) return;
 
-        animator.SetBool("IsLocked", false); // 不再有锁敌状态
-
-        // 自由：转换为本地空间
-        Vector3 localMove = transform.InverseTransformDirection(moveDir);
-
-        animator.SetFloat("MoveX", localMove.x);
-        animator.SetFloat("MoveZ", localMove.z);
-
         animator.SetFloat("Speed", moveDir.magnitude);
+
+        if (Jumping)
+        {
+            animator.SetTrigger("Jump");
+        }
     }
 
-    // =========================
-    // 🌍 重力
-    // =========================
     void ApplyGravity()
     {
-        if (controller.isGrounded && velocity.y < 0)
+        if (!controller.isGrounded)
         {
-            velocity.y = -2f;
+            velocity.y += gravity * Time.deltaTime;
         }
-
-        velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void OnAnimatorMove()
+    {
+        if (useRootMotion && animator != null)
+        {
+            Vector3 rootMotionDelta = animator.deltaPosition;
+            rootMotionDelta.y = 0;
+            controller.Move(rootMotionDelta);
+        }
+    }
+
+    void Jump()
+    {
+        if (controller.isGrounded)
+        {
+            Jumping = true;
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+    }
+
+    // 检查当前动画是否是允许的跳跃动画
+    bool IsJumpAllowed(AnimatorStateInfo currentState)
+    {
+        foreach (var anim in allowedJumpAnimations)
+        {
+            if (currentState.IsName(anim.name))
+            {
+                return true; // 如果当前动画是允许的跳跃动画，则返回 true
+            }
+        }
+        return false; // 否则返回 false
     }
 }
