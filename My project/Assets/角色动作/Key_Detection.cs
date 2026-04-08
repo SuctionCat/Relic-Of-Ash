@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Run_Speed : MonoBehaviour
@@ -34,5 +35,7 @@ public class Run_Speed : MonoBehaviour
         animator.SetBool("isJumping", isJumping);
         bool isAltHolding = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
         animator.SetBool("Alt_holding", isAltHolding);
+        bool Slide = Input.GetKey(KeyCode.C);
+        animator.SetBool("Slide", Slide);
     }
 }
