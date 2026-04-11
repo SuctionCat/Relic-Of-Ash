@@ -6,7 +6,7 @@ public class PlayerSlide : MonoBehaviour
 {
     [Header("胶囊体设置")]
     public CharacterController controller; // 或者使用 CapsuleCollider
-    public Transform meshTransform; // 角色的模型（用于辅助判断，可选）
+    public Animator animator; // 角色的Animator
 
     [Header("尺寸参数")]
     public float standHeight = 1.7f;
@@ -19,49 +19,49 @@ public class PlayerSlide : MonoBehaviour
     private bool isSliding = false;
     private Vector3 targetCenter;
     private float targetHeight;
-
-    private float slideDuration = 0.6f; // 滑铲持续时间（例如1秒后恢复）
-    private Coroutine slideCoroutine;
+    private int slideHash; // 用于存储滑铲动画的哈希值
 
     void Start()
     {
-        if (controller == null) controller = GetComponent<CharacterController>();
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+        if (animator == null)
+            animator = GetComponent<Animator>();
+
         targetHeight = standHeight;
         targetCenter = new Vector3(0, standHeight / 2, 0);
+
+        // 获取滑铲动画的哈希值，确保正确监听动画
+        slideHash = Animator.StringToHash("Slide_Fwd"); // 假设动画状态的名字是 "Slide_Fwd"
     }
 
     void Update()
     {
-        // 1. 判断输入或状态 (这里假设按 C 键滑铲)
-        if (Input.GetKeyDown(KeyCode.C) && !isSliding)
+        // 检查是否进入滑铲动画状态
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Slide_Fwd"))
         {
-            isSliding = true;
-            // 设置目标状态为滑铲
-            targetHeight = slideHeight;
-            targetCenter = new Vector3(0, slideCenterY, 0);
-
-            // 开始一个协程来恢复胶囊体状态
-            if (slideCoroutine != null) 
-                StopCoroutine(slideCoroutine); // 如果有正在执行的协程，停止它
-
-            slideCoroutine = StartCoroutine(SlideCoroutine());
+            // 如果角色进入滑铲状态
+            if (!isSliding)
+            {
+                // 设置胶囊体的目标值
+                targetHeight = slideHeight;
+                targetCenter = new Vector3(0, slideCenterY, 0);
+                isSliding = true;
+            }
+        }
+        else
+        {
+            // 如果角色不在滑铲状态，恢复默认设置
+            if (isSliding)
+            {
+                targetHeight = standHeight;
+                targetCenter = new Vector3(0, standHeight / 2, 0);
+                isSliding = false;
+            }
         }
 
         // 2. 平滑插值更新碰撞体
-        // 注意：CharacterController 的 center 是相对于自身坐标系的
         controller.height = Mathf.Lerp(controller.height, targetHeight, Time.deltaTime * smoothSpeed);
         controller.center = Vector3.Lerp(controller.center, targetCenter, Time.deltaTime * smoothSpeed);
-    }
-
-    // 恢复到原状态的协程
-    private IEnumerator SlideCoroutine()
-    {
-        // 等待滑铲持续时间
-        yield return new WaitForSeconds(slideDuration);
-
-        // 滑铲结束，恢复到站立状态
-        targetHeight = standHeight;
-        targetCenter = new Vector3(0, standHeight / 2, 0);
-        isSliding = false; // 结束滑铲状态
     }
 }

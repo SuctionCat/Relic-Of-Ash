@@ -1524,7 +1524,6 @@ GameObject:
   - component: {fileID: 1932167138758344509}
   - component: {fileID: 4608542456269978508}
   - component: {fileID: 9219087090023348297}
-  - component: {fileID: 824490476503952385}
   - component: {fileID: 3281451102875718380}
   - component: {fileID: 7216577971665519119}
   - component: {fileID: 7065187547638487035}
@@ -1603,30 +1602,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.92, z: 0}
---- !u!114 &824490476503952385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5056756475695333906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fca7446c0b5abe47aebccc409040cf7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  rotationSpeed: 10
-  gravity: -9.8
-  useRootMotion: 1
-  jumpHeight: 1
-  jumpForce: 5
-  cameraTransform: {fileID: 5246130426565481836}
-  animator: {fileID: 4608542456269978508}
-  cameraController: {fileID: 0}
-  allowedJumpAnimations:
-  - {fileID: 7400000, guid: da0d932b062385348b242f179341ea04, type: 2}
-  - {fileID: 7400000, guid: cc4d61713745c3143a25f9b7d3053f40, type: 2}
 --- !u!114 &3281451102875718380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1693,6 +1668,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
+  checkWidth: 0.5
+  boxSize: {x: 0.4, y: 0, z: 0.4}
 --- !u!1 &5273057073506208078
 GameObject:
   m_ObjectHideFlags: 0
