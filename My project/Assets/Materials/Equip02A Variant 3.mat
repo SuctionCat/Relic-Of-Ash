@@ -7,19 +7,19 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: scifi_panel_05
+  m_Name: Equip02A Variant 3
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: a0fe1cb5e36beb54f877dd09396eef5f, type: 2}
-  m_ModifiedSerializedProperties: 0
+  m_Parent: {fileID: -7245741544291729482, guid: 1ddeb5d12c42acb45a4479854146a386,
+    type: 3}
+  m_ModifiedSerializedProperties: 16
   m_ValidKeywords:
-  - _METALLICSPECGLOSSMAP
   - _NORMALMAP
-  m_InvalidKeywords:
-  - _METALLICGLOSSMAP
+  - _PARALLAXMAP
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
@@ -28,31 +28,28 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: fe76785f0e8e4504bb23533cd15c5ccc, type: 3}
-        m_Scale: {x: 2, y: 2}
+        m_Texture: {fileID: 2800000, guid: 5388db19525b8ed44b59f7ef28b8399f, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: e8fee863641f4534b8bda42abe870144, type: 3}
+        m_Texture: {fileID: 2800000, guid: b4e8478a482482941a954abc0a0c3994, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: fe76785f0e8e4504bb23533cd15c5ccc, type: 3}
-        m_Scale: {x: 2, y: 2}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 8b044cf556074cf4495585567d20b02b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5388db19525b8ed44b59f7ef28b8399f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 62cdaac04f496e843b6de21adf4e8ed3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Parallax: 0.02
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
     m_Colors: []
   m_BuildTextureStacks: []
---- !u!114 &44887845567425143
+--- !u!114 &8180668852495702128
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
