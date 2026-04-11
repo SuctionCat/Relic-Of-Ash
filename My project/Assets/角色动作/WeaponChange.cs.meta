@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:My project/Assets/角色动作/WeaponChange.cs.meta
 guid: b14c8657678178e45b6dc928fdd6225f
+=======
+guid: 753ff10a37d9ff54eae97b9cd3db1936
+>>>>>>> Stashed changes:My project/Assets/角色移动脚本/111move.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
