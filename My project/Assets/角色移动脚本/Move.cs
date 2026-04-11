@@ -3,80 +3,152 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : MonoBehaviour
+public class ThirdPersonController : MonoBehaviour
 {
-    [Header("移动设置")]
-    public float moveSpeed = 5.0f;
-    public float rotationSmoothTime = 0.1f; // 转身平滑度 (越小越快)
-    
-    [Header("重力设置")]
-    public float gravity = -9.81f;
+    [Header("Move")]
+    public float moveSpeed = 5f;
+    public float rotationSpeed = 10f;
+    public float gravity = -9.8f;
+    public bool useRootMotion = true;
+    public float jumpHeight = 2f;  // 跳跃高度
+    public float jumpForce = 5f;   // 跳跃力
+
+    [Header("References")]
+    public Transform cameraTransform;
+    public Animator animator;
+    public ThirdPersonCamera cameraController;
 
     private CharacterController controller;
     private Vector3 velocity;
-    private float verticalVelocity;
-    
-    // 用于平滑旋转
-    private float currentRotationVelocity;
+    private bool Jumping = false;
+
+    // =========================
+    // 🟢 允许跳跃的动画
+    // =========================
+    [Header("Jump Settings")]
+    public AnimationClip[] allowedJumpAnimations; // 允许跳跃的动画Clip
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        // 锁定光标（可选）
-        // Cursor.lockState = CursorLockMode.Locked; 
+
+        if (cameraTransform == null)
+            cameraTransform = Camera.main.transform;
     }
 
     void Update()
     {
-        // 1. 获取 WASD 输入
-        float x = Input.GetAxis("Horizontal"); // A/D
-        float z = Input.GetAxis("Vertical");   // W/S
+        HandleMovement();
+    
+        ApplyGravity();
 
-        // 2. 应用重力
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;  // 使角色立刻落地
+            Jumping = false;   // 重置Jumping状态
+        }
+
+        // 检查当前的动画状态
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+        // 如果当前动画是允许的跳跃动画，才允许跳跃
+        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed(currentState))
+        {
+            Jump();
+        }
+    }
+
+    void HandleMovement()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
+
+        Vector3 moveDir = HandleFreeMovement(h, v);
+
+        if (!useRootMotion)
+        {
+            controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        }
+
+        UpdateAnimator(h, v, moveDir);
+    }
+
+    Vector3 HandleFreeMovement(float h, float v)
+    {
+        Vector3 camForward = cameraTransform.forward;
+        Vector3 camRight = cameraTransform.right;
+
+        camForward.y = 0;
+        camRight.y = 0;
+
+        camForward.Normalize();
+        camRight.Normalize();
+
+        Vector3 moveDir = camForward * v + camRight * h;
+
+        if (moveDir.magnitude > 0.1f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(moveDir);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                rotationSpeed * Time.deltaTime
+            );
+        }
+
+        return moveDir.normalized;
+    }
+
+    void UpdateAnimator(float h, float v, Vector3 moveDir)
+    {
+        if (animator == null) return;
+
+        animator.SetFloat("Speed", moveDir.magnitude);
+
+        if (Jumping)
+        {
+            animator.SetTrigger("Jump");
+        }
+    }
+
+    void ApplyGravity()
+    {
+        if (!controller.isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    void OnAnimatorMove()
+    {
+        if (useRootMotion && animator != null)
+        {
+            Vector3 rootMotionDelta = animator.deltaPosition;
+            rootMotionDelta.y = 0;
+            controller.Move(rootMotionDelta);
+        }
+    }
+
+    void Jump()
+    {
         if (controller.isGrounded)
         {
-            verticalVelocity = 0f;
+            Jumping = true;
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-        else
+    }
+
+    // 检查当前动画是否是允许的跳跃动画
+    bool IsJumpAllowed(AnimatorStateInfo currentState)
+    {
+        foreach (var anim in allowedJumpAnimations)
         {
-            verticalVelocity += gravity * Time.deltaTime;
+            if (currentState.IsName(anim.name))
+            {
+                return true; // 如果当前动画是允许的跳跃动画，则返回 true
+            }
         }
-
-        // 3. 如果有输入，进行移动和旋转
-        if (x != 0 || z != 0)
-        {
-            // 关键逻辑：获取摄像机的前方和右方向量
-            // 这样 W 永远是朝着摄像机面对的方向走
-            Camera mainCamera = Camera.main;
-            Vector3 forward = mainCamera.transform.forward;
-            Vector3 right = mainCamera.transform.right;
-
-            // 忽略 Y 轴，防止角色钻地或飞天
-            forward.y = 0f;
-            forward.Normalize();
-            right.y = 0f;
-            right.Normalize();
-
-            // 计算最终的移动方向
-            Vector3 moveDirection = (forward * z + right * x).normalized;
-
-            // 4. 移动角色
-            velocity = moveDirection * moveSpeed;
-            controller.Move(velocity * Time.deltaTime);
-
-            // 5. 平滑旋转角色面向移动方向
-            // 计算目标角度
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            // 使用 Slerp 进行平滑插值
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSmoothTime * 10 * Time.deltaTime);
-        }
-        else
-        {
-            // 如果没有输入，只应用重力
-            velocity = Vector3.zero;
-        }
-
-        // 应用垂直重力
-        controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+        return false; // 否则返回 false
     }
 }

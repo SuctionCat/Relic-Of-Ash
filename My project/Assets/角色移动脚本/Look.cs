@@ -1,65 +1,89 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class ThirdPersonCamera : MonoBehaviour
 {
-    public Transform player; // 玩家角色的Transform
-    public float rotationSpeed = 3f; // 鼠标旋转速度
-    public float zoomSpeed = 2f; // 鼠标滚轮的缩放速度
-    public float minZoom = 3f; // 最小缩放距离
-    public float maxZoom = 10f; // 最大缩放距离
+    [Header("Target")]
+    public Transform player;
 
-    private Camera mainCamera; // 主摄像机
-    private float currentZoom = 5f; // 当前缩放距离
-    private float currentYaw = 0f; // 水平旋转角度
-    private float currentPitch = 20f; // 垂直旋转角度
+    [Header("Settings")]
+    public float mouseSensitivity = 200f;
+    public float distance = 5f;
+    public float height = 1.5f;
+    public float smoothSpeed = 10f;
+
+    [Header("Clamp")]
+    public float minPitch = -30f;
+    public float maxPitch = 60f;
+    public Transform cam;
+
+    [Header("Custom Reference")]
+    public Transform customPitchReference;  // 自定义上下旋转参考对象
+
+    private float yaw;
+    private float pitch = 20f;
 
     void Start()
     {
-        // 获取场景中的主摄像机
-        mainCamera = Camera.main;
-    }
+        if (cam == null)
+            cam = GetComponentInChildren<Camera>().transform;
 
-    void Update()
-    {
-        // 控制相机旋转
-        HandleRotation();
+        if (customPitchReference == null)
+        {
+            // 如果没有指定自定义参考对象，就使用摄像机本身的pivot
+            customPitchReference = transform;
+        }
 
-        // 控制相机缩放
-        HandleZoom();
+        // 初始化角度
+        yaw = transform.eulerAngles.y;
     }
 
     void LateUpdate()
     {
-        // 确保摄像机始终跟随玩家
-        Vector3 desiredPosition = player.position;
-        Quaternion rotation = Quaternion.Euler(currentPitch, currentYaw, 0f);
+        if (player == null) return;
 
-        // 根据鼠标的控制，调整摄像机的视角
-        mainCamera.transform.position = desiredPosition - rotation * Vector3.forward * currentZoom;
-        mainCamera.transform.rotation = rotation;
+        // 直接调用自由视角
+        HandleFreeCamera();
     }
 
-    void HandleRotation()
+    // =========================
+    // 🟢 自由视角
+    // =========================
+    void HandleFreeCamera()
     {
-        // 获取鼠标移动的输入
-        float horizontalInput = Input.GetAxis("Mouse X");
-        float verticalInput = Input.GetAxis("Mouse Y");
+        // 获取鼠标输入
+    float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+    float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // 更新当前的旋转角度
-        currentYaw += horizontalInput * rotationSpeed;
-        currentPitch -= verticalInput * rotationSpeed;
+    // 更新 yaw 和 pitch
+    yaw += mouseX;  // 水平旋转（围绕角色）
+    pitch -= mouseY;  // 垂直旋转（围绕自定义参照对象）
 
-        // 限制垂直旋转角度，防止相机翻转
-        currentPitch = Mathf.Clamp(currentPitch, 10f, 50f);
+    // 限制上下旋转范围
+    pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+    // 水平旋转：角色旋转
+    transform.rotation = Quaternion.Euler(0, yaw, 0);
+
+    // 垂直旋转：由自定义参照对象控制摄像机的上下旋转
+    customPitchReference.localRotation = Quaternion.Euler(pitch, 0, 0);
+
+    // 相机的位置平滑过渡
+    Vector3 targetPos = player.position + Vector3.up * height;
+    transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
+
+    // 防止相机穿透角色
+    Vector3 cameraPos = cam.position;
+    RaycastHit hit;
+    Vector3 dir = (cameraPos - player.position).normalized;
+    if (Physics.Raycast(player.position, dir, out hit, distance))
+    {
+        cameraPos = hit.point; // 如果有障碍物，调整相机位置
     }
 
-    void HandleZoom()
-    {
-        // 获取鼠标滚轮的输入来进行缩放
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-
-        // 更新当前的缩放值
-        currentZoom -= scrollInput * zoomSpeed;
-        currentZoom = Mathf.Clamp(currentZoom, minZoom, maxZoom);
+    // 设置摄像机相对于目标的距离
+    Camera.main.transform.position = cameraPos;
+    Camera.main.transform.localPosition = new Vector3(1.5f, 0, -distance);
     }
 }
