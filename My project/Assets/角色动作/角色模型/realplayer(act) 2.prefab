@@ -1528,7 +1528,6 @@ GameObject:
   - component: {fileID: 7216577971665519119}
   - component: {fileID: 7065187547638487035}
   - component: {fileID: 1660453438272449870}
-  - component: {fileID: 5508248780732204015}
   m_Layer: 0
   m_Name: realplayer(act) 2
   m_TagString: Untagged
@@ -1652,6 +1651,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cdff37cf35f737409632f5d4575ca6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< Updated upstream:My project/Assets/角色动作/角色模型/realplayer(act) 2.prefab
 --- !u!114 &5508248780732204015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,6 +1670,8 @@ MonoBehaviour:
     m_Bits: 4294967295
   checkWidth: 0.5
   boxSize: {x: 0.4, y: 0, z: 0.4}
+=======
+>>>>>>> Stashed changes:My project/Assets/realplayer(act) 2.prefab
 --- !u!1 &5273057073506208078
 GameObject:
   m_ObjectHideFlags: 0
