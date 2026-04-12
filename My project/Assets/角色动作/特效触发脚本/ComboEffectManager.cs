@@ -52,6 +52,7 @@ public class ComboEffectManager : MonoBehaviour
                     {
                         // 停止发射新粒子，并让现有粒子自然消失（平滑停止）
                         effect.Stop(); 
+                        
                     }
                 }
                 return;
