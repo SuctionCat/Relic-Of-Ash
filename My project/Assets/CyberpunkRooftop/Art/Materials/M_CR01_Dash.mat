@@ -141,7 +141,10 @@ Material:
     - _Emissive_Mask: 5
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
+<<<<<<< Updated upstream
     - _ExcludeFromTUAndAA: 0
+=======
+>>>>>>> Stashed changes
     - _Green_Channel_Emissive: 5
     - _GrungeMap_Tile: 2500
     - _Height_Texture: 0

@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream
 guid: 374c8d2c73b949745b22b80e23f8672f
+=======
+<<<<<<<< Updated upstream:My project/Assets/Materials.meta
+guid: 7ea8d149d99160f43a70c823498798a2
+========
+guid: 94d05181dd4152d4b9d6b863d09edf5d
+>>>>>>>> Stashed changes:My project/Assets/CyberpunkRooftop/Art/Materials.meta
+>>>>>>> Stashed changes
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

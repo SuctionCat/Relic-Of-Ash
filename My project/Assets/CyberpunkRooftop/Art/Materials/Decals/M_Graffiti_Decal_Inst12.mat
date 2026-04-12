@@ -170,7 +170,11 @@ MonoBehaviour:
   hdPluginSubTargetMaterialVersions:
     m_Keys: []
     m_Values: 
+<<<<<<< Updated upstream
 --- !u!114 &8394994766289800602
+=======
+--- !u!114 &2884427140325775482
+>>>>>>> Stashed changes
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
