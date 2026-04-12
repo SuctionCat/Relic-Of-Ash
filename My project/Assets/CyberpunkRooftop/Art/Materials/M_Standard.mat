@@ -215,7 +215,10 @@ Material:
     - _BUILTIN_QueueOffset: 0
     - _Blend: 0
     - _BlendMode: 0
+<<<<<<< Updated upstream
     - _BlendModePreserveSpecular: 0
+=======
+>>>>>>> Stashed changes
     - _BlendOp: 0
     - _BumpScale: 1
     - _CameraFadingEnabled: 0
@@ -223,7 +226,10 @@ Material:
     - _CameraNearFadeDistance: 1
     - _CastShadows: 1
     - _CoatMask: 0
+<<<<<<< Updated upstream
     - _ConservativeDepthOffsetEnable: 0
+=======
+>>>>>>> Stashed changes
     - _Cull: 2
     - _CullMode: 2
     - _CullModeForward: 2
@@ -258,7 +264,10 @@ Material:
     - _EnableFogOnTransparent: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
+<<<<<<< Updated upstream
     - _ExcludeFromTUAndAA: 0
+=======
+>>>>>>> Stashed changes
     - _Flatness: 0.5
     - _FlipbookMode: 0
     - _GlossMapScale: 1
@@ -304,8 +313,11 @@ Material:
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
     - _RefractionModel: 0
+<<<<<<< Updated upstream
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
+=======
+>>>>>>> Stashed changes
     - _Roughness: 0.5
     - _Saturation: 1
     - _Smoothness: 0.271
@@ -323,12 +335,18 @@ Material:
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 8
+<<<<<<< Updated upstream
     - _StencilRefDistortionVec: 4
+=======
+>>>>>>> Stashed changes
     - _StencilRefGBuffer: 10
     - _StencilRefMV: 40
     - _StencilWriteMask: 6
     - _StencilWriteMaskDepth: 8
+<<<<<<< Updated upstream
     - _StencilWriteMaskDistortionVec: 4
+=======
+>>>>>>> Stashed changes
     - _StencilWriteMaskGBuffer: 14
     - _StencilWriteMaskMV: 40
     - _SubsurfaceMask: 1

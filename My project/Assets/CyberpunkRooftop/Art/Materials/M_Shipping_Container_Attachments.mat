@@ -80,10 +80,16 @@ Material:
     - _BUILTIN_QueueOffset: 0
     - _Blend: 0
     - _BlendMode: 0
+<<<<<<< Updated upstream
     - _BlendModePreserveSpecular: 0
     - _CastShadows: 1
     - _ConservativeDepthOffsetEnable: 0
     - _Cull: 0
+=======
+    - _CastShadows: 1
+    - _ConservativeDepthOffsetEnable: 0
+    - _Cull: 2
+>>>>>>> Stashed changes
     - _CullMode: 0
     - _CullModeForward: 0
     - _Custom_Opacity: 0
@@ -96,7 +102,10 @@ Material:
     - _Emissive_Power: 1
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
+<<<<<<< Updated upstream
     - _ExcludeFromTUAndAA: 0
+=======
+>>>>>>> Stashed changes
     - _Flatness: 0.5
     - _Metallic: 0
     - _NormalStrength: 1

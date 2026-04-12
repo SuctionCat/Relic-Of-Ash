@@ -64,7 +64,10 @@ Material:
     - _DstBlend: 0
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
+<<<<<<< Updated upstream
     - _ExcludeFromTUAndAA: 0
+=======
+>>>>>>> Stashed changes
     - _Fresnel_Base_Reflection_Fraction_In: 0.04
     - _Fresnel_Exponent_In: 0.09
     - _Fresnel_Power: 0.23
