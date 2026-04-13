@@ -8,25 +8,34 @@ public class AttackEffectController : MonoBehaviour
     [Tooltip("在这里配置所有的特效组及其对应的Key名称")]
     public List<EffectGroup> effectGroups = new List<EffectGroup>();
 
-    // 用于快速查找的内部字典
     private Dictionary<string, EffectGroup> effectDictionary = new Dictionary<string, EffectGroup>();
 
     [Header("通用设置")]
     public Transform weaponPoint; // 武器发射点
 
-    // 定义特效组结构
+    [Header("发射设置")]
+    [Tooltip("特效移动的速度（单位：米/秒）")]
+    public float launchSpeed = 10f;
+    
+    [Tooltip("特效持续飞行的时间（秒）")]
+    public float flightDuration = 2.0f;
+
+    [Tooltip("发射时的高度偏移（解决特效在脚底下的问题）")]
+    public float launchHeightOffset = 1.0f;
+
+    [Tooltip("发射位置距离玩家/武器点的水平距离（制造发射感）")] // --- 新增参数
+    public float spawnDistance = 2.0f;
+
     [System.Serializable]
     public class EffectGroup
     {
-        public string effectKey;                  // 特效组的唯一标识名称（例如："HeavySlash"）
-        
-        [Tooltip("该组内包含的所有特效，会同时播放")]
-        public List<ParticleSystem> effectPrefabs = new List<ParticleSystem>(); // 这里变成了列表
+        public string effectKey;
+        [Tooltip("该组内包含的所有特效")]
+        public List<ParticleSystem> effectPrefabs = new List<ParticleSystem>();
     }
 
     void Start()
     {
-        // 初始化字典
         effectDictionary.Clear();
         foreach (var group in effectGroups)
         {
@@ -34,7 +43,6 @@ public class AttackEffectController : MonoBehaviour
             {
                 if (effectDictionary.ContainsKey(group.effectKey))
                 {
-                    Debug.LogWarning($"[AttackEffectController] 检测到重复的 Effect Key: {group.effectKey}，将使用后者覆盖。");
                     effectDictionary[group.effectKey] = group;
                 }
                 else
@@ -45,50 +53,70 @@ public class AttackEffectController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 由动画事件调用的函数
-    /// </summary>
-    /// <param name="keyName">在Inspector中设置的特效Key名字</param>
     public void TriggerEffect(string keyName)
     {
-        // 1. 查找对应的特效组
         if (effectDictionary.TryGetValue(keyName, out EffectGroup targetGroup))
         {
-            // 2. 确定位置和旋转 (所有特效共享同一个生成点)
-            Vector3 spawnPos = weaponPoint != null ? weaponPoint.position : transform.position;
-            Quaternion spawnRot = transform.rotation;
+            // 1. 获取基础位置（武器点或玩家中心）
+            Vector3 basePos = weaponPoint != null ? weaponPoint.position : transform.position;
+            
+            // 2. 获取玩家朝向
+            Quaternion baseRot = transform.rotation;
 
-            // 3. 遍历列表，实例化该组内的所有特效
+            // --- 修改点：计算最终生成位置 ---
+            // 基础位置 + 向上抬高 + 向前推移
+            // baseRot * Vector3.forward 获取的是“玩家前方”的向量
+            Vector3 spawnPos = basePos + (Vector3.up * launchHeightOffset) + (baseRot * Vector3.forward * spawnDistance);
+
             foreach (var prefab in targetGroup.effectPrefabs)
             {
                 if (prefab != null)
                 {
-                    // 在世界坐标生成，无父物体
-                    GameObject effectInstance = Instantiate(prefab.gameObject, spawnPos, spawnRot);
+                    // 3. 视觉旋转：依然旋转180度，让特效背对玩家
+                    Quaternion finalRot = baseRot * Quaternion.Euler(0, 180, 0);
                     
-                    // 播放粒子
-                    ParticleSystem ps = effectInstance.GetComponent<ParticleSystem>();
-                    if (ps != null)
-                    {
-                        ps.Play();
-                    }
-                    else
-                    {
-                        // 兼容处理：如果预制体根节点没有PS，尝试找子物体
-                        ParticleSystem[] childPS = effectInstance.GetComponentsInChildren<ParticleSystem>();
-                        foreach(var child in childPS) child.Play();
-                    }
+                    // 实例化特效（使用计算好的前方位置）
+                    GameObject effectInstance = Instantiate(prefab.gameObject, spawnPos, finalRot);
 
-                    // 自动销毁
-                    // 注意：如果组内特效时长差异巨大，这里简单的2秒销毁可能不够完美
-                    // 完美做法是读取所有特效的 duration 取最大值，但通常2-3秒足够通用
-                    Destroy(effectInstance, 1.5f); 
+                    // 播放粒子
+                    PlayEffect(effectInstance);
+
+                    // 4. 移动方向：依然是玩家的正前方
+                    Vector3 direction = baseRot * Vector3.forward;
+
+                    StartCoroutine(MoveEffectRoutine(effectInstance, direction, flightDuration));
                 }
             }
         }
         else
         {
-            Debug.LogWarning($"[AttackEffectController] 未找到名为 '{keyName}' 的特效组，请检查拼写。");
+            Debug.LogWarning($"[AttackEffectController] 未找到名为 '{keyName}' 的特效组");
         }
+    }
+
+    private void PlayEffect(GameObject obj)
+    {
+        ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+        if (ps != null) ps.Play();
+        else
+        {
+            ParticleSystem[] childPS = obj.GetComponentsInChildren<ParticleSystem>();
+            foreach (var child in childPS) child.Play();
+        }
+    }
+
+    private IEnumerator MoveEffectRoutine(GameObject effectObj, Vector3 moveDirection, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            // 移动坐标
+            effectObj.transform.Translate(moveDirection * launchSpeed * Time.deltaTime, Space.World);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(effectObj);
     }
 }
