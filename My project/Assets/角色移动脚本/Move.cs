@@ -9,29 +9,28 @@ public class ThirdPersonController : MonoBehaviour
     public float moveSpeed = 5f;
     public float rotationSpeed = 10f;
     public float gravity = -9.8f;
-    public bool useRootMotion = true;
-    public float jumpHeight = 2f;  // 跳跃高度
-    public float jumpForce = 5f;   // 跳跃力
+    
+    // 全局开关：是否使用根运动（针对非跳跃状态）
+    public bool useRootMotion = true; 
+
+    [Header("Jump Settings")]
+    public float jumpHeight = 2f;
+    public float jumpForce = 5f;
+    public AnimationClip[] allowedJumpAnimations; 
 
     [Header("References")]
     public Transform cameraTransform;
     public Animator animator;
-    public ThirdPersonCamera cameraController;
 
     private CharacterController controller;
     private Vector3 velocity;
-    private bool Jumping = false;
-
-    // =========================
-    // 🟢 允许跳跃的动画
-    // =========================
-    [Header("Jump Settings")]
-    public AnimationClip[] allowedJumpAnimations; // 允许跳跃的动画Clip
+    
+    // 🟢 新增：标记当前是否处于“空中自由控制”状态
+    private bool isAirborne = false; 
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
-
         if (cameraTransform == null)
             cameraTransform = Camera.main.transform;
     }
@@ -39,20 +38,18 @@ public class ThirdPersonController : MonoBehaviour
     void Update()
     {
         HandleMovement();
-    
         ApplyGravity();
 
+        // 接地检测
         if (controller.isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f;  // 使角色立刻落地
-            Jumping = false;   // 重置Jumping状态
+            velocity.y = -2f; 
+            // 🟢 落地时重置状态
+            isAirborne = false; 
         }
 
-        // 检查当前的动画状态
-        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
-
-        // 如果当前动画是允许的跳跃动画，才允许跳跃
-        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed(currentState))
+        // 跳跃输入检测
+        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed())
         {
             Jump();
         }
@@ -65,7 +62,9 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 moveDir = HandleFreeMovement(h, v);
 
-        if (!useRootMotion)
+        // ⚠️ 修改点：只有当“不在空中” 且 “开启根运动”时，才不手动移动（交给OnAnimatorMove处理）
+        // 如果 isAirborne 为 true，我们需要在这里手动移动，因为 OnAnimatorMove 会忽略 Y 轴以外的根运动
+        if (!useRootMotion || isAirborne)
         {
             controller.Move(moveDir * moveSpeed * Time.deltaTime);
         }
@@ -80,12 +79,12 @@ public class ThirdPersonController : MonoBehaviour
 
         camForward.y = 0;
         camRight.y = 0;
-
         camForward.Normalize();
         camRight.Normalize();
 
         Vector3 moveDir = camForward * v + camRight * h;
 
+        // 旋转逻辑
         if (moveDir.magnitude > 0.1f)
         {
             Quaternion targetRot = Quaternion.LookRotation(moveDir);
@@ -103,12 +102,34 @@ public class ThirdPersonController : MonoBehaviour
     {
         if (animator == null) return;
 
-        animator.SetFloat("Speed", moveDir.magnitude);
+        // 根据状态决定速度参数，跳跃时通常保持速度或减速，这里保持原逻辑
+        float speed = isAirborne ? moveDir.magnitude : moveDir.magnitude; 
+        animator.SetFloat("Speed", speed);
 
-        if (Jumping)
+        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed())
         {
-            animator.SetTrigger("Jump");
+             animator.SetTrigger("Jump");
         }
+    }
+
+    // 🟢 核心修改：OnAnimatorMove 是处理根运动的关键
+    void OnAnimatorMove()
+    {
+        if (animator == null) return;
+
+        // 情况1：如果开启了根运动 且 当前 NOT 在空中 -> 完全应用根运动
+        if (useRootMotion && !isAirborne)
+        {
+            controller.Move(animator.deltaPosition);
+        }
+        // 情况2：如果开启了根运动 但 当前在空中 -> 只应用垂直(Y)根运动，忽略水平(XZ)根运动
+        else if (useRootMotion && isAirborne)
+        {
+            Vector3 rootMotionDelta = animator.deltaPosition;
+            // 只保留 Y 轴的根运动（比如跳跃动画本身的上冲力），丢弃 XZ 位移
+            controller.Move(new Vector3(0, rootMotionDelta.y, 0));
+        }
+        // 情况3：如果没开启根运动 -> 不在此处处理，完全由 Update 中的 Move 控制
     }
 
     void ApplyGravity()
@@ -120,35 +141,28 @@ public class ThirdPersonController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    void OnAnimatorMove()
-    {
-        if (useRootMotion && animator != null)
-        {
-            Vector3 rootMotionDelta = animator.deltaPosition;
-            rootMotionDelta.y = 0;
-            controller.Move(rootMotionDelta);
-        }
-    }
-
     void Jump()
     {
         if (controller.isGrounded)
         {
-            Jumping = true;
+            // 🟢 标记进入空中状态
+            isAirborne = true; 
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
     }
 
-    // 检查当前动画是否是允许的跳跃动画
-    bool IsJumpAllowed(AnimatorStateInfo currentState)
+    bool IsJumpAllowed()
     {
+        if (allowedJumpAnimations.Length == 0) return true; // 如果没有指定，默认允许
+
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
         foreach (var anim in allowedJumpAnimations)
         {
             if (currentState.IsName(anim.name))
             {
-                return true; // 如果当前动画是允许的跳跃动画，则返回 true
+                return true;
             }
         }
-        return false; // 否则返回 false
+        return false;
     }
 }
