@@ -6,9 +6,15 @@ LightingSettings:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< Updated upstream:My project/Assets/Rapier_Anim_Set/ScenePreview/Rapier_Anim_Set_SetSettings.lighting
   m_Name: Rapier_Anim_Set_SetSettings
   serializedVersion: 3
   m_GIWorkflowMode: 0
+=======
+  m_Name: New Lighting Settings
+  serializedVersion: 6
+  m_GIWorkflowMode: 1
+>>>>>>> Stashed changes:My project/Assets/New Lighting Settings.lighting
   m_EnableBakedLightmaps: 1
   m_EnableRealtimeLightmaps: 1
   m_RealtimeEnvironmentLighting: 1

@@ -37,5 +37,11 @@ public class Run_Speed : MonoBehaviour
         animator.SetBool("Alt_holding", isAltHolding);
         bool Slide = Input.GetKey(KeyCode.C);
         animator.SetBool("Slide", Slide);
+        bool Q_holding = Input.GetKey(KeyCode.Q);
+        animator.SetBool("Q_holding", Q_holding);
+        bool E_holding = Input.GetKey(KeyCode.E);
+        animator.SetBool("E_holding", E_holding);
+        bool R_holding = Input.GetKey(KeyCode.R);
+        animator.SetBool("R_holding", R_holding);
     }
 }

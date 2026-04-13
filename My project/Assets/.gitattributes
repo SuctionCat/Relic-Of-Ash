@@ -1,0 +1,2 @@
+D:/unity项目/Unity_Project/My filter=lfs diff=lfs merge=lfs -text
+project/Assets filter=lfs diff=lfs merge=lfs -text
