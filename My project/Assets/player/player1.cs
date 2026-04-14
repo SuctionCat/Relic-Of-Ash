@@ -28,7 +28,7 @@ public class player1 : MonoBehaviour
     // 处理武器碰撞
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.CompareTag("Enemy1"))
+        if (collision.CompareTag("Enemy"))
         {
             // 对敌人造成伤害
             Enemy123 enemy = collision.GetComponent<Enemy123>();
