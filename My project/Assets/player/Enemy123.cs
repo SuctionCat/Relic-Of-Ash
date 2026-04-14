@@ -24,7 +24,7 @@ public class Enemy123 : MonoBehaviour
     private void OnTriggerEnter(Collider collision)
     {
         // 检测是否与玩家武器碰撞
-        if (collision.CompareTag("attck1pos"))
+        if (collision.CompareTag("attckpos"))
         {
             // 获取武器所属的玩家
             player1 player = collision.GetComponentInParent<player1>();
