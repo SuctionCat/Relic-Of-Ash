@@ -78,13 +78,17 @@ public class AttackEffectController : MonoBehaviour
                     // 实例化特效（使用计算好的前方位置）
                     GameObject effectInstance = Instantiate(prefab.gameObject, spawnPos, finalRot);
 
-                    // 播放粒子
-                    PlayEffect(effectInstance);
-
-                    // 4. 移动方向：依然是玩家的正前方
-                    Vector3 direction = baseRot * Vector3.forward;
-
-                    StartCoroutine(MoveEffectRoutine(effectInstance, direction, flightDuration));
+                    if (effectInstance != null) 
+                    {
+                        PlayEffect(effectInstance);
+                        Vector3 direction = baseRot * Vector3.forward;
+                        StartCoroutine(MoveEffectRoutine(effectInstance, direction, flightDuration));
+                    }
+                    else
+                    {
+                        // 如果实例化失败，打印警告但不会导致游戏崩溃
+                        Debug.LogWarning($"[AttackEffectController] 实例化特效 {prefab.name} 失败，已跳过。");
+                    }
                 }
             }
         }
@@ -96,6 +100,7 @@ public class AttackEffectController : MonoBehaviour
 
     private void PlayEffect(GameObject obj)
     {
+        if (obj == null) return;
         ParticleSystem ps = obj.GetComponent<ParticleSystem>();
         if (ps != null) ps.Play();
         else
