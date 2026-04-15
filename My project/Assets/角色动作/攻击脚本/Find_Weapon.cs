@@ -7,16 +7,13 @@ public class Find_Weapon : MonoBehaviour
     // 变量类型改为 BaseWeapon，这样它可以接收 Sword, Katana 或 Stick
     private BaseWeapon currentWeapon;
 
-    // 动画事件调用这个函数
     public void SetAttackActive(int isActive)
     {
-        // 如果当前没找到武器，或者找到的武器被禁用了，重新找一次
-        if (currentWeapon == null)
+        if (currentWeapon == null || !currentWeapon.gameObject.activeSelf)
         {
             FindActiveWeapon();
         }
 
-        // 调用武器方法
         if (currentWeapon != null)
         {
             currentWeapon.SetAttackActive(isActive);

@@ -20,18 +20,16 @@ public class BaseWeapon : MonoBehaviour
         weaponCollider = GetComponent<Collider>();
     }
 
-    // 动画事件调用这个
     public virtual void SetAttackActive(int isActive)
     {
         canAttack = (isActive == 1);
         
-        // 可选优化：如果 canAttack 为 false，强制关闭碰撞体，防止逻辑错误
         if(weaponCollider != null)
         {
             weaponCollider.enabled = canAttack;
         }
-        Debug.Log($"Weapon: {gameObject.name}, Active: {canAttack}, Time: {Time.time}");// 打印调试信息
-       }
+        Debug.Log($"Weapon: {gameObject.name}, Active: {canAttack}, Time: {Time.time}");
+    }
 
     // 公共的触发逻辑
     private void OnTriggerEnter(Collider other)
@@ -45,7 +43,7 @@ public class BaseWeapon : MonoBehaviour
         if (enemy != null)
         {
             // 关键点：把“父类”的 damage 传给敌人
-            enemy.TakeHit(damage, knockbackForce);
+            enemy.TakeHit(damage, knockbackForce,this.transform);
             
             // 防止同一帧多次判定（视具体需求而定，通常建议加个简单的冷却或标记）
             canAttack = false; 

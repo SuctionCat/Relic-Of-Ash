@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Enemy
   - weapon
+  - attckpos
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemy
   - Water
   - UI
   - 

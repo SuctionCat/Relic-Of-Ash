@@ -7,10 +7,10 @@ public class ThirdPersonController : MonoBehaviour
 {
     [Header("Move")]
     public float moveSpeed = 5f;
-    public float rotationSpeed = 10f;
+    public float rotationSpeed = 10f; 
+    public float targetingRotationSpeed = 5f; // 索敌时的旋转速度
     public float gravity = -9.8f;
     
-    // 全局开关：是否使用根运动（针对非跳跃状态）
     public bool useRootMotion = true; 
 
     [Header("Jump Settings")]
@@ -24,19 +24,40 @@ public class ThirdPersonController : MonoBehaviour
 
     private CharacterController controller;
     private Vector3 velocity;
-    
-    // 🟢 新增：标记当前是否处于“空中自由控制”状态
     private bool isAirborne = false; 
+
+    // --- 🟢 索敌系统变量 ---
+    private bool isTargeting = false;       // 是否开启索敌模式
+    public Transform currentTarget;         // 当前锁定的目标
+    
+    [Header("Targeting Settings")]
+    public float detectionRange = 15f;      // 索敌范围半径
+    public LayerMask enemyLayer;            // 敌人所在的层 (建议在Inspector里设置)
+    public string enemyTag = "Enemy";       // 敌人的标签
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         if (cameraTransform == null)
             cameraTransform = Camera.main.transform;
+            
+        // 如果没设置敌层层级，默认包含所有层级，避免无法检测
+        if (enemyLayer.value == 0) 
+        {
+            enemyLayer = Physics.AllLayers;
+        }
     }
 
     void Update()
     {
+        HandleInput();
+        
+        // 🟢 只有在索敌模式下，才每帧尝试更新最近的目标
+        if (isTargeting)
+        {
+            FindClosestEnemy();
+        }
+
         HandleMovement();
         ApplyGravity();
 
@@ -44,15 +65,58 @@ public class ThirdPersonController : MonoBehaviour
         if (controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f; 
-            // 🟢 落地时重置状态
             isAirborne = false; 
         }
 
-        // 跳跃输入检测
+        // 跳跃输入
         if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed())
         {
             Jump();
         }
+    }
+
+    void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            isTargeting = !isTargeting;
+            Debug.Log("索敌状态: " + isTargeting);
+            
+            // 关闭索敌时清空目标
+            if(!isTargeting) currentTarget = null;
+        }
+    }
+
+    // 🟢 核心功能：寻找最近的敌人
+    void FindClosestEnemy()
+    {
+        // 1. 使用物理重叠球体检测范围内的所有碰撞体
+        // 这里的 transform.position 是角色的位置
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRange, enemyLayer);
+
+        float closestDistance = Mathf.Infinity; // 初始化最近距离为无穷大
+        Transform closestTransform = null;
+
+        foreach (var collider in hitColliders)
+        {
+            // 2. 检查标签是否匹配 (双重保险，防止Layer设置错误)
+            if (collider.CompareTag(enemyTag))
+            {
+                // 3. 计算距离
+                // 使用 sqrMagnitude (平方距离) 比 Vector3.Distance 性能更好，因为不需要开根号
+                float distance = (collider.transform.position - transform.position).sqrMagnitude;
+
+                // 4. 如果这个敌人比之前记录的更近，更新它
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestTransform = collider.transform;
+                }
+            }
+        }
+
+        // 5. 赋值最终结果
+        currentTarget = closestTransform;
     }
 
     void HandleMovement()
@@ -62,8 +126,6 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 moveDir = HandleFreeMovement(h, v);
 
-        // ⚠️ 修改点：只有当“不在空中” 且 “开启根运动”时，才不手动移动（交给OnAnimatorMove处理）
-        // 如果 isAirborne 为 true，我们需要在这里手动移动，因为 OnAnimatorMove 会忽略 Y 轴以外的根运动
         if (!useRootMotion || isAirborne)
         {
             controller.Move(moveDir * moveSpeed * Time.deltaTime);
@@ -84,15 +146,34 @@ public class ThirdPersonController : MonoBehaviour
 
         Vector3 moveDir = camForward * v + camRight * h;
 
-        // 旋转逻辑
-        if (moveDir.magnitude > 0.1f)
+        // --- 🟢 智能旋转逻辑 ---
+        bool hasInput = moveDir.magnitude > 0.1f;
+
+        if (hasInput)
         {
+            // 1. 有 WASD 输入 -> 面向移动方向 (主导)
             Quaternion targetRot = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetRot,
                 rotationSpeed * Time.deltaTime
             );
+        }
+        else if (isTargeting && currentTarget != null)
+        {
+            // 2. 无输入 且 索敌中 -> 面向敌人
+            Vector3 directionToEnemy = currentTarget.position - transform.position;
+            directionToEnemy.y = 0; // 忽略高度差
+            
+            if (directionToEnemy.sqrMagnitude > 0.1f) // 防止除零或抖动
+            {
+                Quaternion targetRot = Quaternion.LookRotation(directionToEnemy);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRot,
+                    targetingRotationSpeed * Time.deltaTime
+                );
+            }
         }
 
         return moveDir.normalized;
@@ -101,8 +182,6 @@ public class ThirdPersonController : MonoBehaviour
     void UpdateAnimator(float h, float v, Vector3 moveDir)
     {
         if (animator == null) return;
-
-        // 根据状态决定速度参数，跳跃时通常保持速度或减速，这里保持原逻辑
         float speed = isAirborne ? moveDir.magnitude : moveDir.magnitude; 
         animator.SetFloat("Speed", speed);
 
@@ -112,24 +191,19 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
-    // 🟢 核心修改：OnAnimatorMove 是处理根运动的关键
     void OnAnimatorMove()
     {
         if (animator == null) return;
 
-        // 情况1：如果开启了根运动 且 当前 NOT 在空中 -> 完全应用根运动
         if (useRootMotion && !isAirborne)
         {
             controller.Move(animator.deltaPosition);
         }
-        // 情况2：如果开启了根运动 但 当前在空中 -> 只应用垂直(Y)根运动，忽略水平(XZ)根运动
         else if (useRootMotion && isAirborne)
         {
             Vector3 rootMotionDelta = animator.deltaPosition;
-            // 只保留 Y 轴的根运动（比如跳跃动画本身的上冲力），丢弃 XZ 位移
             controller.Move(new Vector3(0, rootMotionDelta.y, 0));
         }
-        // 情况3：如果没开启根运动 -> 不在此处处理，完全由 Update 中的 Move 控制
     }
 
     void ApplyGravity()
@@ -145,7 +219,6 @@ public class ThirdPersonController : MonoBehaviour
     {
         if (controller.isGrounded)
         {
-            // 🟢 标记进入空中状态
             isAirborne = true; 
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
@@ -153,8 +226,7 @@ public class ThirdPersonController : MonoBehaviour
 
     bool IsJumpAllowed()
     {
-        if (allowedJumpAnimations.Length == 0) return true; // 如果没有指定，默认允许
-
+        if (allowedJumpAnimations.Length == 0) return true;
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
         foreach (var anim in allowedJumpAnimations)
         {
