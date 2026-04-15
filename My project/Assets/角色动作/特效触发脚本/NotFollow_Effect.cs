@@ -81,6 +81,20 @@ public class AttackEffectController : MonoBehaviour
                     if (effectInstance != null) 
                     {
                         PlayEffect(effectInstance);
+                        // 1. 设置层级（非常重要！否则射线检测不到）
+                        // 假设你有一个名为 "Enemy" 或 "Default" 的层级用于敌人
+                        // effectInstance.layer = LayerMask.NameToLayer("Enemy"); // 如果需要剑气本身也算碰撞体才开启
+                        
+                        // 2. 动态添加伤害脚本
+                        // 检查是否已经存在该脚本，避免重复添加
+                        // 2. 动态添加伤害脚本
+                        if (effectInstance.GetComponent<Effect_Damage>() == null)
+                        {
+                            Effect_Damage beamDamage = effectInstance.AddComponent<Effect_Damage>();
+                            // 在这里配置伤害参数
+                            beamDamage.damage = 20; 
+                            beamDamage.knockback = 10f;
+                        }
                         Vector3 direction = baseRot * Vector3.forward;
                         StartCoroutine(MoveEffectRoutine(effectInstance, direction, flightDuration));
                     }
