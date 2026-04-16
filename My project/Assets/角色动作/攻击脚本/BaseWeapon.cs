@@ -46,8 +46,8 @@ public class BaseWeapon : MonoBehaviour
             enemy.TakeHit(damage, knockbackForce,this.transform);
             
             // 防止同一帧多次判定（视具体需求而定，通常建议加个简单的冷却或标记）
-            canAttack = false; 
-            if(weaponCollider != null) weaponCollider.enabled = false;
+            //canAttack = false; 
+            //if(weaponCollider != null) weaponCollider.enabled = false;
         }
     }
 }
