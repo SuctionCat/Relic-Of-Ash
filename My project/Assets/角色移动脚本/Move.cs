@@ -22,6 +22,9 @@ public class ThirdPersonController : MonoBehaviour
     public Transform cameraTransform;
     public Animator animator;
 
+    [Header("References")]
+    public ThirdPersonCamera thirdPersonCamera;
+
     private CharacterController controller;
     private Vector3 velocity;
     private bool isAirborne = false; 
@@ -84,6 +87,11 @@ public class ThirdPersonController : MonoBehaviour
             
             // 关闭索敌时清空目标
             if(!isTargeting) currentTarget = null;
+
+            if (thirdPersonCamera != null)
+            {
+                thirdPersonCamera.SetTargeting(isTargeting, currentTarget);
+            }
         }
     }
 
@@ -117,6 +125,11 @@ public class ThirdPersonController : MonoBehaviour
 
         // 5. 赋值最终结果
         currentTarget = closestTransform;
+        // 🟢 如果摄像机存在，也更新它的目标
+        if (thirdPersonCamera != null && isTargeting)
+        {
+            thirdPersonCamera.SetTargeting(true, currentTarget);
+        }
     }
 
     void HandleMovement()
