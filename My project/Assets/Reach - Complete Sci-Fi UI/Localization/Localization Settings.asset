@@ -42,6 +42,6 @@ MonoBehaviour:
     localizationTable: {fileID: 11400000, guid: c4d223e438e911a44aecec230da547ea,
       type: 2}
     isExpanded: 0
-  defaultLanguageID: asd (aasdas)
+  defaultLanguageID: English (en-US)
   defaultLanguageIndex: 0
   enableExperimental: 0
