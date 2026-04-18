@@ -81,7 +81,7 @@ public class EnemyHealth : MonoBehaviour
             Debug.Log("敌人死亡！碰撞体已移除。");
 
             // 延迟两秒销毁对象
-            Invoke("DestroyEnemy", 2f);
+            Invoke("DestroyEnemy", 4f);
         }
     }
 
