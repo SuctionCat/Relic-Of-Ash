@@ -4,10 +4,10 @@ using UnityEngine.AI; // 1. 必须引入导航命名空间
 public class EnemyAI : MonoBehaviour
 {
     // --- 组件引用 ---
-    private NavMeshAgent agent;
-    private Animator animator;
-    private Transform playerTransform;
-    private bool isCurrentlyAttacking = false;// 是否正在攻击，防止攻击时移动
+    protected NavMeshAgent agent;
+    protected Animator animator;
+    protected Transform playerTransform;
+    protected bool isCurrentlyAttacking = false;// 是否正在攻击，防止攻击时移动
 
     // --- 配置参数 (可在Inspector面板调整) ---
     public float detectionRange = 10f; // 发现玩家的距离范围
@@ -15,7 +15,7 @@ public class EnemyAI : MonoBehaviour
     public float attackRange = 2.0f;   // 攻击距离（这里要和 NavMeshAgent 的“停止距离”保持一致）
 
 
-    void Start()
+    protected virtual void Start()
     {
         // 2. 获取组件
         agent = GetComponent<NavMeshAgent>();
@@ -36,7 +36,7 @@ public class EnemyAI : MonoBehaviour
         agent.speed = moveSpeed;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (playerTransform == null) return;// 如果主角不存在，直接返回
 
@@ -94,7 +94,7 @@ public class EnemyAI : MonoBehaviour
             isCurrentlyAttacking = false;
         }
     }
-    public void FinishAttackAnimation()
+    public virtual void FinishAttackAnimation()
     {
         isCurrentlyAttacking = false;
         // 可选：如果攻击结束时玩家还在范围内且没跑远，可以立刻恢复追击
