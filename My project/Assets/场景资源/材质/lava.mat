@@ -155,7 +155,7 @@ Material:
     - _ZWrite: 1
     - _normal_strength: 0.74
     - _offset_speed: 0.2
-    - _smooth: 0.71
+    - _smooth: 0.2
     - _tiling: 0.82
     m_Colors:
     - _: {r: 0, g: 0, b: 0, a: 0}
