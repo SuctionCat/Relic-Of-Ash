@@ -65,7 +65,7 @@ public class ThirdPersonController : MonoBehaviour
         ApplyGravity();
 
         // 接地检测
-        if (controller.isGrounded && velocity.y < 0)
+        if (controller.isGrounded)
         {
             velocity.y = -2f; 
             isAirborne = false; 
