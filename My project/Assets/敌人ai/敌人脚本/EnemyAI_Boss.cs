@@ -40,6 +40,15 @@ public class EnemyAI_Boss : EnemyAI
     // 是否正在转向玩家（用于特殊攻击）
     private bool isTurningToPlayer = false;
     
+    // 是否正在攻击后站立
+    private bool isPostAttackStanding = false;
+    
+    // 攻击后站立计时器
+    private float postAttackStandTimer = 0f;
+    
+    // 攻击后站立持续时间
+    private float postAttackStandDuration = 0f;
+    
     // 武器胶囊体引用
     public CapsuleCollider weaponCollider;
     
@@ -124,6 +133,29 @@ public class EnemyAI_Boss : EnemyAI
                 isAttackReady = true;
                 attackCooldownTimer = 0f;
             }
+        }
+        
+        // 处理攻击后站立逻辑
+        if (isPostAttackStanding)
+        {
+            postAttackStandTimer += Time.deltaTime;
+            
+            // 站立期间面朝玩家
+            Vector3 targetDirection = playerTransform.position - transform.position;
+            targetDirection.y = 0;
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            
+            // 检查站立时间是否结束
+            if (postAttackStandTimer >= postAttackStandDuration)
+            {
+                // 退出站立状态
+                isPostAttackStanding = false;
+                animator.SetBool("Stand", false);
+            }
+            
+            // 站立期间不执行其他逻辑
+            return;
         }
 
         // 1. 发现玩家
@@ -331,6 +363,30 @@ public class EnemyAI_Boss : EnemyAI
         
         // 攻击完成后重置追击计时器
         chaseTimer = 0f;
+        
+        // 如果是Attack1或Attack2攻击，进入攻击后站立状态
+        if (!isAttackReady && !isAttack3Ready)
+        {
+            StartPostAttackStanding();
+        }
+    }
+    
+    // 开始攻击后站立
+    private void StartPostAttackStanding()
+    {
+        // 设置站立状态
+        isPostAttackStanding = true;
+        
+        // 设置站立持续时间（与攻击冷却时间相同）
+        postAttackStandDuration = currentAttackCooldown;
+        postAttackStandTimer = 0f;
+        
+        // 停止移动
+        agent.isStopped = true;
+        agent.ResetPath();
+        
+        // 设置站立动画
+        animator.SetBool("Stand", true);
     }
     
     // 触发特殊攻击（翻滚+长刺击）
