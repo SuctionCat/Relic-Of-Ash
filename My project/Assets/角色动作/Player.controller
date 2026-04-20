@@ -4185,7 +4185,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Run_Fast_Combat_Loop_RM
+  m_Name: Run_Fast_Combat_Loop_Stick
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
