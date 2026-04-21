@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class ScenesControl 
 {
-    private Dictionary<string, ScenesBase> dict_scenes;
+    public Dictionary<string, ScenesBase> dict_scenes;
     private static ScenesControl instance;
     
-    private ScenesControl()
+    public ScenesControl()
     {
         dict_scenes = new Dictionary<string, ScenesBase>();
     }
@@ -22,7 +22,11 @@ public class ScenesControl
         }
         return instance;
     }
-    
+    /// <summary>
+    /// 加载场景并进入场景
+    /// </summary>
+    /// <param name="scene_name">目标场景名称</param>
+    /// <param name="sceneBase">场景基类</param>
     public void LoadScene(string scene_name, ScenesBase sceneBase)
     {
         // 检查场景是否已存在于字典中
@@ -46,25 +50,17 @@ public class ScenesControl
         {
             Debug.Log($"当前场景不存在于字典中: {currentSceneName}");
         }
-        
+
+        #region 
+
+        GameRoot.GetInstance().UIManager_Root.Pop(true);
+        #endregion
         // 加载新场景
         SceneManager.LoadScene(scene_name);
+        sceneBase.EnterScene();
     }
     
-    public void AddScene(string scene_name, ScenesBase sceneBase)
-    {
-        if(!dict_scenes.ContainsKey(scene_name))
-        {
-            dict_scenes.Add(scene_name, sceneBase);
-        }
-    }
+  
     
-    public ScenesBase GetScene(string scene_name)
-    {
-        if(dict_scenes.ContainsKey(scene_name))
-        {
-            return dict_scenes[scene_name];
-        }
-        return null;
-    }
+    
 }
