@@ -1714,6 +1714,8 @@ MonoBehaviour:
   damage: 10
   targetTag: Player
   attackCollider: {fileID: 3389292233047054585}
+  defenseAnimations: []
+  perfectBlockAnimations: []
 --- !u!114 &2176316482010731996
 MonoBehaviour:
   m_ObjectHideFlags: 0
