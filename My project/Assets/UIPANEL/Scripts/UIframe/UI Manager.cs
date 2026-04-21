@@ -20,6 +20,7 @@ public class UIManager
     /// 当前场景里的Canvas物体
     /// </summary>
     public GameObject CanvasObj;
+    ///
     private static UIManager instance;
     public static UIManager GetInstance()
     {
@@ -59,8 +60,8 @@ public class UIManager
        }
        if(CanvasObj==null)
        {
-       Debug.Log($"UIManage未能成功获得Canvas物体");
-       return null;
+        CanvasObj = UImched.GetInstance().FindCanvas();
+
        } 
        GameObject prefab = Resources.Load<GameObject>(uITepy.Name);
        if(prefab == null)
@@ -79,13 +80,17 @@ public class UIManager
       {
         stack_ui.Peek().OnDisable();
       }
-      GameObject ui_pushObj = GetSingleObject(basePanel_push.uiType);
-      if(ui_pushObj == null)
+      GameObject ui_object = GetSingleObject(basePanel_push.uiType);
+      if(!dict_uiObject.ContainsKey(basePanel_push.uiType.Name))
+      {
+          dict_uiObject.Add(basePanel_push.uiType.Name, ui_object);
+      }
+      basePanel_push.ActiveObj = ui_object;
+      if(ui_object == null)
       {
           Debug.Log($"未能创建UI对象: {basePanel_push.uiType.Name}");
           return;
       }
-      basePanel_push.ActiveObj = ui_pushObj;
       if(stack_ui.Count==0)
       {
         stack_ui.Push(basePanel_push);
@@ -137,7 +142,7 @@ public class UIManager
                 if(stack_ui.Count>0)
                 {
                     currentPanel = stack_ui.Peek();
-                    currentPanel.ONStart();
+                    currentPanel.OnEnable();
                 }
             }
         }
