@@ -433,6 +433,51 @@ public class EnemyAI_Boss : EnemyAI
         isPerformingSpecialAttack = false;
     }
     
+    // 当受到格挡反击时调用，重置所有攻击状态
+    public void ResetAttackState()
+    {
+        // 重置当前攻击状态
+        isCurrentlyAttacking = false;
+        
+        // 关闭所有攻击动画
+        animator.SetBool("canAttack1", false);
+        animator.SetBool("canAttack2", false);
+        animator.SetBool("canAttack3", false);
+        
+        // 重置特殊攻击状态
+        isPerformingSpecialAttack = false;
+        isTurningToPlayer = false;
+        
+        // 关闭特殊攻击动画
+        animator.SetBool("Roll", false);
+        animator.SetBool("LongStab", false);
+        
+        // 恢复武器胶囊体原始长度和半径
+        if (weaponCollider != null)
+        {
+            weaponCollider.height = originalWeaponLength;
+            weaponCollider.radius = originalWeaponRadius;
+        }
+        
+        // 重置攻击后站立状态
+        isPostAttackStanding = false;
+        animator.SetBool("Stand", false);
+        
+        // 重置追击计时器，让Boss重新开始追击
+        chaseTimer = 0f;
+        
+        // 停止移动，等待下一帧重新判断状态
+        agent.isStopped = true;
+        agent.ResetPath();
+        
+        // 停止所有正在播放的特效
+        ComboEffectManager effectManager = GetComponent<ComboEffectManager>();
+        if (effectManager != null)
+        {
+            effectManager.StopAllEffects();
+        }
+    }
+    
     // 开始Attack1和Attack2的冷却
     private void StartAttackCooldown()
     {

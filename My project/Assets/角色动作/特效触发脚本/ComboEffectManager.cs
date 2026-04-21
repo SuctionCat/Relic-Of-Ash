@@ -60,4 +60,21 @@ public class ComboEffectManager : MonoBehaviour
         }
         Debug.LogWarning("未找到特效标识符 (Stop): " + key);
     }
+    
+    // --- 3. 停止所有特效 ---
+    // 当角色被打断或死亡时调用
+    public void StopAllEffects()
+    {
+        foreach (var config in configList)
+        {
+            foreach (var effect in config.effects)
+            {
+                if (effect != null)
+                {
+                    // 停止发射新粒子，并让现有粒子自然消失（平滑停止）
+                    effect.Stop();
+                }
+            }
+        }
+    }
 }

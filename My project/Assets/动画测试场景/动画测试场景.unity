@@ -2965,6 +2965,66 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: defenseAnimations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[0]
+      value: Block_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[1]
+      value: Block_Combat_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[2]
+      value: Block_Combat_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[3]
+      value: Block_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[0]
+      value: Block_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[1]
+      value: Parry_Counter_Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[2]
+      value: Block_Combat_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[3]
+      value: Parry_Combat_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[4]
+      value: defense_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 6886662251917023795, guid: 8ff4abb7198218643b29c46105ced588,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[5]
+      value: stinger_02
+      objectReference: {fileID: 0}
     - target: {fileID: 7194289841331450591, guid: 8ff4abb7198218643b29c46105ced588,
         type: 3}
       propertyPath: m_Layer
@@ -3146,12 +3206,12 @@ PrefabInstance:
     - target: {fileID: 1735137858864959780, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
       propertyPath: maxAttackCooldown
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1735137858864959780, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
       propertyPath: minAttackCooldown
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1877479512949813653, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
@@ -3200,8 +3260,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3389292233047054585, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
+      propertyPath: m_Height
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389292233047054585, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
       propertyPath: m_Radius
       value: 0.44
+      objectReference: {fileID: 0}
+    - target: {fileID: 4093522275344646529, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 4093522275344646529, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 4093522275344646529, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.79
       objectReference: {fileID: 0}
     - target: {fileID: 4093522275344646529, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
@@ -3253,10 +3333,75 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4093522275344646529, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7386914122471345945, guid: 43b17274201192e48a8b24eedb04d40a,
         type: 3}
       propertyPath: m_Radius
-      value: 0.62
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: defenseAnimations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[0]
+      value: Block_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[1]
+      value: Block_Combat_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[2]
+      value: Block_Combat_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[3]
+      value: Block_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[0]
+      value: Block_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[1]
+      value: Parry_Counter_Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[2]
+      value: Block_Combat_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[3]
+      value: Parry_Combat_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[4]
+      value: defense_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 9211272902002455468, guid: 43b17274201192e48a8b24eedb04d40a,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[5]
+      value: stinger_02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3279,6 +3424,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 458594905231650316, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 458594905231650316, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[0]
+      value: Parry_Counter_Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 458594905231650316, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[1]
+      value: Block_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196954054447724305, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: attackEffectKeys.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1234223819448612161, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1234223819448612161, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[0]
+      value: stinger_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1234223819448612161, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[1]
+      value: defense_03
+      objectReference: {fileID: 0}
     - target: {fileID: 1845139840233963738, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3334,6 +3514,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: realplayer4.0
       objectReference: {fileID: 0}
+    - target: {fileID: 7717822274832265017, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717822274832265017, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[0]
+      value: Parry_Combat_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 7717822274832265017, guid: dce4c955b0df2e140b2ba2c6ddbe2080,
+        type: 3}
+      propertyPath: parryAnimationNames.Array.data[1]
+      value: Block_Combat_Start
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3357,6 +3552,66 @@ PrefabInstance:
       propertyPath: attackCollider
       value: 
       objectReference: {fileID: 923301050}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: defenseAnimations.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[0]
+      value: Block_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[1]
+      value: Block_Combat_Loop
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[2]
+      value: Block_Combat_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: defenseAnimations.Array.data[3]
+      value: Block_Hit
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[0]
+      value: Block_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[1]
+      value: Parry_Counter_Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[2]
+      value: Block_Combat_Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[3]
+      value: Parry_Combat_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[4]
+      value: defense_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2373689536069231055, guid: 6779eb83f507c4c4098b5b97cd8df622,
+        type: 3}
+      propertyPath: perfectBlockAnimations.Array.data[5]
+      value: stinger_02
+      objectReference: {fileID: 0}
     - target: {fileID: 2596833351209967797, guid: 6779eb83f507c4c4098b5b97cd8df622,
         type: 3}
       propertyPath: m_ApplyRootMotion

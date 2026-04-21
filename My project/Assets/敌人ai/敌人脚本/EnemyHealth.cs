@@ -38,10 +38,25 @@ public class EnemyHealth : MonoBehaviour
     }
 
     // --- 新增功能的函数 ---
-    public void TakeHit(int damageAmount, float knockback, Transform attacker)
+    public void TakeHit(int damageAmount, float knockback, Transform attacker, bool isParry = false)
     {
-        // 播放动画
-        animator.SetTrigger("Be_hit");
+        // 播放动画 - 如果是格挡反击则播放专门的格挡反击受击动画
+        if (isParry)
+        {
+            animator.SetTrigger("Be_Parryhit");
+            Debug.Log("受到格挡反击！");
+            
+            // 如果是Boss，重置所有攻击状态，让Boss进入idle状态
+            EnemyAI_Boss bossAI = GetComponent<EnemyAI_Boss>();
+            if (bossAI != null)
+            {
+                bossAI.ResetAttackState();
+            }
+        }
+        else
+        {
+            animator.SetTrigger("Be_hit");
+        }
         
         // 播放特效
         if (hitEffectPrefab != null)
