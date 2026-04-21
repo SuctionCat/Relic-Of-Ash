@@ -36,8 +36,8 @@ public class UIManager
         return instance;
     }
     
-   private UIManager()
-    { 
+    private UIManager()
+    {
         instance = this;
         dict_uiObject = new Dictionary<string, GameObject>();
         stack_ui = new Stack<BasePanel>();

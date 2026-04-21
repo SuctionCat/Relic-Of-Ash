@@ -37,7 +37,7 @@ public class ScenesControl
         
         // 退出当前场景
         string currentSceneName = SceneManager.GetActiveScene().name;
-        if(!dict_scenes.ContainsKey(currentSceneName))
+        if(dict_scenes.ContainsKey(currentSceneName))
         {
             // 尝试调用ExitScene方法
             ScenesBase currentScene = dict_scenes[currentSceneName];
@@ -50,7 +50,9 @@ public class ScenesControl
         {
             Debug.Log($"当前场景不存在于字典中: {currentSceneName}");
         }
+
         #region 
+
         GameRoot.GetInstance().UIManager_Root.Pop(true);
         #endregion
         // 加载新场景
@@ -58,20 +60,7 @@ public class ScenesControl
         sceneBase.EnterScene();
     }
     
-    public void AddScene(string scene_name, ScenesBase sceneBase)
-    {
-        if(!dict_scenes.ContainsKey(scene_name))
-        {
-            dict_scenes.Add(scene_name, sceneBase);
-        }
-    }
+  
     
-    public ScenesBase GetScene(string scene_name)
-    {
-        if(dict_scenes.ContainsKey(scene_name))
-        {
-            return dict_scenes[scene_name];
-        }
-        return null;
-    }
+    
 }
