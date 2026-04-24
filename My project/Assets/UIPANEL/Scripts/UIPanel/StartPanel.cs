@@ -17,6 +17,11 @@ public StartPanel():base(UIPanelType)
         base.ONStart();
         UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
         UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Load").onClick.AddListener(LoadButtonClick);
+        UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Setting").onClick.AddListener(SettingButtonClick);
+    }
+    private void SettingButtonClick()
+    {   
+        GameRoot.GetInstance().UIManager_Root.Push(new SettingPanel());
     }
     private void BackButtonClick()
     {
