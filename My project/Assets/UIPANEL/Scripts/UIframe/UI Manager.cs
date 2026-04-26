@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIManager 
+public class UIManager
 { 
     /// <summary>
     /// 存储uiPanel的名称与物体的对应关系
@@ -12,7 +12,7 @@ public class UIManager
     /// 存储栈的uiPanel的栈结构
     /// </summary>
     public BasePanel currentPanel;
-    
+
     public UITepy currentPanelType;
     public Stack<BasePanel> stack_ui;
 
@@ -35,14 +35,14 @@ public class UIManager
         }
         return instance;
     }
-    
+
     private UIManager()
     {
         instance = this;
         dict_uiObject = new Dictionary<string, GameObject>();
         stack_ui = new Stack<BasePanel>();
     }
-    
+
     /// <summary>
     /// 设置Canvas对象
     /// </summary>
@@ -52,21 +52,47 @@ public class UIManager
         CanvasObj = canvas;
         Debug.Log("Canvas对象已设置");
     }
+
+    /// <summary>
+    /// 确保Canvas对象存在
+    /// </summary>
+    private void EnsureCanvasExists()
+    {
+        if(CanvasObj == null)
+        {
+            Debug.Log("Canvas对象为空，尝试查找...");
+            CanvasObj = UImched.GetInstance().FindCanvas();
+            if(CanvasObj == null)
+            {
+                Debug.LogError("无法找到Canvas对象！");
+            }
+            else
+            {
+                Debug.Log("成功找到Canvas对象");
+            }
+        }
+    }
+
     public GameObject GetSingleObject(UITepy uITepy)
     {
        if(dict_uiObject.ContainsKey(uITepy.Name))
        {
         return dict_uiObject[uITepy.Name];
        }
-       if(CanvasObj==null)
-       {
-        CanvasObj = UImched.GetInstance().FindCanvas();
 
-       } 
-       GameObject prefab = Resources.Load<GameObject>(uITepy.Name);
+       // 确保Canvas存在
+       EnsureCanvasExists();
+
+       if(CanvasObj == null)
+       {
+           Debug.LogError("Canvas对象为空，无法加载UI");
+           return null;
+       }
+
+       GameObject prefab = Resources.Load<GameObject>(uITepy.Path);
        if(prefab == null)
        {
-           Debug.Log($"未能加载UI资源: {uITepy.Name}");
+           Debug.Log($"未能加载UI资源: {uITepy.Path}");
            return null;
        }
        GameObject gameObject = GameObject.Instantiate<GameObject>(prefab, CanvasObj.transform);
@@ -81,16 +107,16 @@ public class UIManager
         stack_ui.Peek().OnDisable();
       }
       GameObject ui_object = GetSingleObject(basePanel_push.uiType);
-      if(!dict_uiObject.ContainsKey(basePanel_push.uiType.Name))
-      {
-          dict_uiObject.Add(basePanel_push.uiType.Name, ui_object);
-      }
-      basePanel_push.ActiveObj = ui_object;
       if(ui_object == null)
       {
           Debug.Log($"未能创建UI对象: {basePanel_push.uiType.Name}");
           return;
       }
+      if(!dict_uiObject.ContainsKey(basePanel_push.uiType.Name))
+      {
+          dict_uiObject.Add(basePanel_push.uiType.Name, ui_object);
+      }
+      basePanel_push.ActiveObj = ui_object;
       if(stack_ui.Count==0)
       {
         stack_ui.Push(basePanel_push);
@@ -104,6 +130,32 @@ public class UIManager
       }
       basePanel_push.ONStart();
     }
+    //<summary>
+    ///禁用除指定面板外的所有面板
+    /// </summary>
+    public void DisableAllPanelsExcept(BasePanel exceptPanel)
+    {
+        foreach(BasePanel panel in stack_ui)
+        {
+            if(panel != exceptPanel)
+            {
+                UImched.GetInstance().GetOrAddComponent<CanvasGroup>(panel.ActiveObj).interactable = false;
+            }
+        }
+    }
+
+    //<summary>
+    ///恢复上一个面板的交互性
+    /// </summary>
+    public void RestorePreviousPanelInteractivity()
+    {
+        if(stack_ui.Count > 0)
+        {
+            BasePanel previousPanel = stack_ui.Peek();
+            UImched.GetInstance().GetOrAddComponent<CanvasGroup>(previousPanel.ActiveObj).interactable = true;
+        }
+    }
+
     //<summary>
     ///出栈
     /// </summary>
@@ -148,4 +200,3 @@ public class UIManager
         }
     }
 }
-

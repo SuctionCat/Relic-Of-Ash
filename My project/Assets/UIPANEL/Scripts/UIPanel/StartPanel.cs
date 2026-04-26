@@ -20,15 +20,21 @@ public StartPanel():base(UIPanelType)
         UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Setting").onClick.AddListener(SettingButtonClick);
     }
     private void SettingButtonClick()
-    {   
+    {
+        // 播放点击音效
+        AudioManager.PlayClick();
         GameRoot.GetInstance().UIManager_Root.Push(new SettingPanel());
     }
     private void BackButtonClick()
     {
+        // 播放点击音效
+        AudioManager.PlayClick();
         GameRoot.GetInstance().UIManager_Root.Pop(false);
     }
     private void LoadButtonClick()
     {
+        // 播放点击音效
+        AudioManager.PlayClick();
         Scene2 scene2 = new Scene2();
         GameRoot.GetInstance().ScenesControl_Root.LoadScene(scene2.SceneName,scene2);
     }
