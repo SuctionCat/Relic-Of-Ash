@@ -18,6 +18,38 @@ public class GameRoot : MonoBehaviour
         }
         return instance;
     }
+    
+    // 存储需要在Update中调用的方法
+    private List<System.Action> updateMethods = new List<System.Action>();
+    
+    // 注册Update方法
+    public void RegisterUpdateMethod(System.Action updateMethod)
+    {
+        if(!updateMethods.Contains(updateMethod))
+        {
+            updateMethods.Add(updateMethod);
+        }
+    }
+    
+    // 取消注册Update方法
+    public void UnregisterUpdateMethod(System.Action updateMethod)
+    {
+        if(updateMethods.Contains(updateMethod))
+        {
+            updateMethods.Remove(updateMethod);
+        }
+    }
+    
+    private void Update()
+    {
+        // 创建一个副本，避免在遍历过程中修改原集合
+        List<System.Action> methodsCopy = new List<System.Action>(updateMethods);
+        foreach(var method in methodsCopy)
+        {
+            method?.Invoke();
+        }
+    }
+    
     private void Awake()
     {
         if (instance == null)
@@ -48,9 +80,8 @@ public class GameRoot : MonoBehaviour
         Scene1 scene1 = new Scene1();
         ScenesControl_Root.dict_scenes.Add(scene1.SceneName,scene1);
     #region
-    UIManager_Root.Push(new StartPanel());
-    
+    UIManager_Root.Push(new InitialPanel());
+
     #endregion
     }
 }
- 
