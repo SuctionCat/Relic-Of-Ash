@@ -2472,6 +2472,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1667503940 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8827038123649122106, guid: c7cdb4392ccbd554bbe256f9864db3de,
+    type: 3}
+  m_PrefabInstance: {fileID: 1836694026}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1667503941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667503940}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b97715c94458db47af0a3bf3d62a5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  swingSounds:
+  - soundKey: Sword 1_1
+    audioClip: {fileID: 8300000, guid: 50548e5ea453f53429d8f37cae3373ec, type: 3}
+  - soundKey: Sword 2_1
+    audioClip: {fileID: 8300000, guid: 3fbdff041f6244d4c9be23fa857c9177, type: 3}
+  - soundKey: Sword 2_2
+    audioClip: {fileID: 8300000, guid: 3fbdff041f6244d4c9be23fa857c9177, type: 3}
 --- !u!198 &1799166227 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 198189196357569358, guid: 3e914ef784028124db1daf7002a87cc8,
@@ -2550,7 +2575,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8827038123649122106, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1667503941}
   m_SourcePrefab: {fileID: 100100000, guid: c7cdb4392ccbd554bbe256f9864db3de, type: 3}
 --- !u!4 &1920032023 stripped
 Transform:
