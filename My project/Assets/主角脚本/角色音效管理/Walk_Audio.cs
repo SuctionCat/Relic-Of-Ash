@@ -18,6 +18,10 @@ public class Walk_Audio : MonoBehaviour
     [Tooltip("快速奔跑音效")]
     public AudioClip runSound;
 
+    [Header("音频源")]
+    [Tooltip("专属脚步声音频源（需手动分配）")]
+    public AudioSource walkAudioSource;
+
     private Animator _animator;
     private AudioSource _audioSource;
     private AnimationClip _currentAnimationClip;
@@ -27,14 +31,12 @@ public class Walk_Audio : MonoBehaviour
     void Awake()
     {
         _animator = GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
+        _audioSource = walkAudioSource;
         
-        if (_audioSource == null)
+        if (_audioSource != null)
         {
-            _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.loop = true;
         }
-        
-        _audioSource.loop = true;
     }
 
     void Update()

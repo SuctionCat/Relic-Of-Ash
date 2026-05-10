@@ -15,16 +15,16 @@ public class Knife_Audio : MonoBehaviour
     [Tooltip("通过关键字管理多个挥刀音效")]
     public List<SoundEntry> swingSounds = new List<SoundEntry>();
 
+    [Header("音频源")]
+    [Tooltip("专属挥刀音效音频源（需手动分配）")]
+    public AudioSource knifeAudioSource;
+
     private AudioSource audioSource;
     private Dictionary<string, AudioClip> soundDictionary = new Dictionary<string, AudioClip>();
 
     void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        audioSource = knifeAudioSource;
         BuildSoundDictionary();
     }
 
