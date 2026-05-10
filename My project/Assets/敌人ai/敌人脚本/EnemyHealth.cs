@@ -7,9 +7,14 @@ public class EnemyHealth : MonoBehaviour
     private Animator animator;
     private EnemyAI enemyAI;
     private CapsuleCollider capsuleCollider; // 1. 声明胶囊碰撞体变量
+    private AudioSource audioSource; // 音频源组件
 
     // [重要] 请在Inspector面板中拖入你的粒子特效预制体
-    public GameObject hitEffectPrefab; 
+    public GameObject hitEffectPrefab;
+
+    [Header("受击音效设置")]
+    [Tooltip("受击音效组，每次受击会随机播放其中一个")]
+    public AudioClip[] hitSounds; // 音效组数组 
 
     [Header("打击感设置")]
     [Tooltip("顿帧时的时间流速，0表示完全暂停，0.1-0.2感觉比较明显")]
@@ -28,12 +33,20 @@ public class EnemyHealth : MonoBehaviour
         // 2. 获取胶囊碰撞体组件
         // 如果你的敌人使用的是 BoxCollider 或 MeshCollider，请相应修改这里
         capsuleCollider = GetComponent<CapsuleCollider>();
+
+        // 获取或添加音频源组件
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     // --- 兼容旧代码的函数 ---
     public void TakeHit(int damageAmount, float knockback)
     {
         animator.SetTrigger("Be_hit");
+        PlayRandomHitSound(); // 播放受击音效
         Debug.Log("受到攻击！伤害值：" + damageAmount);
     }
 
@@ -57,6 +70,8 @@ public class EnemyHealth : MonoBehaviour
         {
             animator.SetTrigger("Be_hit");
         }
+
+        PlayRandomHitSound(); // 播放受击音效
         
         // 播放特效
         if (hitEffectPrefab != null)
@@ -128,5 +143,20 @@ public class EnemyHealth : MonoBehaviour
     private void DestroyEnemy()
     {
         Destroy(gameObject);
+    }
+
+    private void PlayRandomHitSound()
+    {
+        if (hitSounds != null && hitSounds.Length > 0)
+        {
+            // 从音效组中随机选择一个音效
+            int randomIndex = Random.Range(0, hitSounds.Length);
+            AudioClip randomSound = hitSounds[randomIndex];
+            
+            if (randomSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(randomSound);
+            }
+        }
     }
 }

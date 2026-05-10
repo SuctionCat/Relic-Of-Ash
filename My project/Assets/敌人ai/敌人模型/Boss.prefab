@@ -1729,6 +1729,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitEffectPrefab: {fileID: 0}
+  hitSounds: []
   hitPauseScale: 0.1
   hitPauseDuration: 0.1
   currentHealth: 1000
