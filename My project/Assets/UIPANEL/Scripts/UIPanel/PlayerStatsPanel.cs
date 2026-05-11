@@ -33,11 +33,11 @@ public PlayerStatsPanel():base(UIPanelType)
     public override void ONStart()
     {
         base.ONStart();
-        UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
+        UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
         
         // 获取技能按钮引用
-        buttonE = UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonE");
-        buttonQ = UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonQ");
+        buttonE = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonE");
+        buttonQ = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonQ");
         
         // 为技能按钮添加点击事件
         if(buttonE != null)
@@ -51,8 +51,8 @@ public PlayerStatsPanel():base(UIPanelType)
         }
         
         // 尝试获取冷却时间文本（如果存在）
-        cooldownTextE = UImched.GetInstance().GetOrAddComponent<Text>(ActiveObj,"CooldownTextE");
-        cooldownTextQ = UImched.GetInstance().GetOrAddComponent<Text>(ActiveObj,"CooldownTextQ");
+        cooldownTextE = UImchud.GetInstance().GetOrAddComponent<Text>(ActiveObj,"CooldownTextE");
+        cooldownTextQ = UImchud.GetInstance().GetOrAddComponent<Text>(ActiveObj,"CooldownTextQ");
         
         // 初始隐藏冷却文本
         if(cooldownTextE != null)

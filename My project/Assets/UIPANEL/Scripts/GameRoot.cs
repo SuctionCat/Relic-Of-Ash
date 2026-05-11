@@ -9,7 +9,7 @@ public class GameRoot : MonoBehaviour
     private ScenesControl ScenesControl;
     public ScenesControl ScenesControl_Root{get=> ScenesControl;}
     private static GameRoot instance;
-    public static GameRoot GetInstance() 
+    public static GameRoot GetInstance()
     {
         if (instance == null)
         {
@@ -18,10 +18,13 @@ public class GameRoot : MonoBehaviour
         }
         return instance;
     }
-    
+
+    // 当前场景名称
+    private string currentSceneName = "";
+
     // 存储需要在Update中调用的方法
     private List<System.Action> updateMethods = new List<System.Action>();
-    
+
     // 注册Update方法
     public void RegisterUpdateMethod(System.Action updateMethod)
     {
@@ -30,7 +33,7 @@ public class GameRoot : MonoBehaviour
             updateMethods.Add(updateMethod);
         }
     }
-    
+
     // 取消注册Update方法
     public void UnregisterUpdateMethod(System.Action updateMethod)
     {
@@ -39,9 +42,37 @@ public class GameRoot : MonoBehaviour
             updateMethods.Remove(updateMethod);
         }
     }
-    
+
+    // 更新当前场景名称
+    public void SetCurrentSceneName(string sceneName)
+    {
+        currentSceneName = sceneName;
+        Debug.Log($"当前场景设置为: {sceneName}");
+    }
+
+    // 处理ESC键打开对应面板
+    private void HandleESCKey()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            if(currentSceneName == "Scene2")
+            {
+                Debug.Log("检测到ESC键，打开暂停菜单");
+                UIManager_Root.Push(new PausePanel());
+            }
+            else if(currentSceneName == "Scene1")
+            {
+                Debug.Log("检测到ESC键，打开退出游戏面板");
+                UIManager_Root.Push(new QuitPanel());
+            }
+        }
+    }
+
     private void Update()
     {
+        // 处理ESC键
+        HandleESCKey();
+
         // 创建一个副本，避免在遍历过程中修改原集合
         List<System.Action> methodsCopy = new List<System.Action>(updateMethods);
         foreach(var method in methodsCopy)
@@ -49,7 +80,7 @@ public class GameRoot : MonoBehaviour
             method?.Invoke();
         }
     }
-    
+
     private void Awake()
     {
         if (instance == null)
@@ -62,13 +93,13 @@ public class GameRoot : MonoBehaviour
         }
         UIManager = UIManager.GetInstance();
         ScenesControl = ScenesControl.GetInstance();
-        
+
     }
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
-        // Find Canvas object using UImched
-        GameObject canvas = UImched.GetInstance().FindCanvas();
+        // Find Canvas object using UImchud
+        GameObject canvas = UImchud.GetInstance().FindCanvas();
         if (canvas != null)
         {
             UIManager_Root.CanvasObj = canvas;

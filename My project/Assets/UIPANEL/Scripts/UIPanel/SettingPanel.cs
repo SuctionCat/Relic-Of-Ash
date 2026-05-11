@@ -20,11 +20,11 @@ public SettingPanel():base(UIPanelType)
     public override void ONStart()
     {
         base.ONStart();
-        UImched.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
+        UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
         
         // 初始化音量滑块
-        musicSlider = UImched.GetInstance().GetOrAddComponent<Slider>(ActiveObj,"MusicSlider");
-        sfxSlider = UImched.GetInstance().GetOrAddComponent<Slider>(ActiveObj,"SFXSlider");
+        musicSlider = UImchud.GetInstance().GetOrAddComponent<Slider>(ActiveObj,"MusicSlider");
+        sfxSlider = UImchud.GetInstance().GetOrAddComponent<Slider>(ActiveObj,"SFXSlider");
         
         if(musicSlider != null)
         {

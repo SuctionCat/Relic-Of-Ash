@@ -30,7 +30,7 @@ public class InitialPanel : BasePanel
         base.ONStart();
         Debug.Log("InitialPanel ONStart called");
         // 尝试获取名为PromptText的Text组件
-        textComponent = UImched.GetInstance().GetOrAddComponent<Text>(ActiveObj, "PromptText");
+        textComponent = UImchud.GetInstance().GetOrAddComponent<Text>(ActiveObj, "PromptText");
         if (textComponent != null)
         {
             Debug.Log("成功获取到PromptText Text组件");
@@ -38,7 +38,7 @@ public class InitialPanel : BasePanel
         else
         {
             // 尝试获取TMP_Text组件
-            tmpTextComponent = UImched.GetInstance().GetOrAddComponent<TMP_Text>(ActiveObj, "PromptText");
+            tmpTextComponent = UImchud.GetInstance().GetOrAddComponent<TMP_Text>(ActiveObj, "PromptText");
             if (tmpTextComponent != null)
             {
                 Debug.Log("成功获取到PromptText TMP_Text组件");
@@ -77,7 +77,7 @@ public class InitialPanel : BasePanel
         }
 
         // 获取BackGround图片
-        backgroundImage = UImched.GetInstance().GetOrAddComponent<Image>(ActiveObj, "BackGround");
+        backgroundImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "BackGround");
         if (backgroundImage != null)
         {
             Debug.Log("成功获取到BackGround图片组件");
@@ -116,11 +116,6 @@ public class InitialPanel : BasePanel
             tmpTextComponent.color = color;
         }
         
-        // 每5帧输出一次调试信息
-        if (Time.frameCount % 5 == 0)
-        {
-            Debug.Log($"文字透明度: {alpha}");
-        }
     }
 
     private void UpdateBackGroundEffect()
