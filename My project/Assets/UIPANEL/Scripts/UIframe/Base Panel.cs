@@ -16,19 +16,19 @@ public class BasePanel
     }
     public virtual void ONStart()
     {
-        UImched.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = true;
+        UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = true;
     }
     public virtual void OnEnable()
     {
-        UImched.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = true;
+        UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = true;
     }
     public virtual void OnDisable()
     {
-        UImched.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = false;
+        UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = false;
     }
     public virtual void OnDestroy()
     {
-        UImched.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = false;
+        UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj).interactable = false;
 
     }
 }

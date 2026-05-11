@@ -61,7 +61,7 @@ public class UIManager
         if(CanvasObj == null)
         {
             Debug.Log("Canvas对象为空，尝试查找...");
-            CanvasObj = UImched.GetInstance().FindCanvas();
+            CanvasObj = UImchud.GetInstance().FindCanvas();
             if(CanvasObj == null)
             {
                 Debug.LogError("无法找到Canvas对象！");
@@ -137,9 +137,16 @@ public class UIManager
     {
         foreach(BasePanel panel in stack_ui)
         {
+            CanvasGroup canvasGroup = UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(panel.ActiveObj);
             if(panel != exceptPanel)
             {
-                UImched.GetInstance().GetOrAddComponent<CanvasGroup>(panel.ActiveObj).interactable = false;
+                canvasGroup.interactable = false;
+                canvasGroup.blocksRaycasts = false;
+            }
+            else
+            {
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
             }
         }
     }
@@ -152,7 +159,7 @@ public class UIManager
         if(stack_ui.Count > 0)
         {
             BasePanel previousPanel = stack_ui.Peek();
-            UImched.GetInstance().GetOrAddComponent<CanvasGroup>(previousPanel.ActiveObj).interactable = true;
+            UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(previousPanel.ActiveObj).interactable = true;
         }
     }
 

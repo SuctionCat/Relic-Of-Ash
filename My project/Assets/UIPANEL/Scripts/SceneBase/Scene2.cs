@@ -9,6 +9,9 @@ public class Scene2 : ScenesBase
 
      public override void EnterScene()
     {
+        // 设置当前场景名称，使ESC键可以打开暂停菜单
+        GameRoot.GetInstance().SetCurrentSceneName(SceneName);
+
         // 使用协程延迟加载Player Stats UI面板
         // 因为SceneManager.LoadScene后，新场景可能还没有完全加载完成
         GameRoot.GetInstance().StartCoroutine(LoadPlayerStatsPanelCoroutine());

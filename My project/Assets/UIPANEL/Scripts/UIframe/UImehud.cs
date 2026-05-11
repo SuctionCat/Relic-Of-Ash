@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UImched 
+public class UImchud 
 {
-    private static UImched instance;
-    public static UImched GetInstance()
+    private static UImchud instance;
+    public static UImchud GetInstance()
     {
         if(instance==null)
         {
-           Debug.Log("UImched实例不存在");
-           instance = new UImched();
-           Debug.Log("UImched实例已创建");
+           Debug.Log("UImchud实例不存在");
+           instance = new UImchud();
+           Debug.Log("UImchud实例已创建");
         }
         
         return instance;
