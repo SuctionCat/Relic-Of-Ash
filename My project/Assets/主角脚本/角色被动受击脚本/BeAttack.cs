@@ -32,6 +32,7 @@ public class BeAttack : MonoBehaviour
     
     private bool isPlayingHitAnimation = false;
     private bool isTransitioning = false;
+    private bool isDead = false;
 
     void Awake()
     {
@@ -44,6 +45,7 @@ public class BeAttack : MonoBehaviour
                 Debug.LogWarning($"未找到名为 {behitLayerName} 的动画图层");
             }
         }
+        animator.SetFloat("Health", Health);
     }
     
     void Update()
@@ -71,6 +73,12 @@ public class BeAttack : MonoBehaviour
         else if (isHitAnimationPlaying && !isBaseLayerAllowed && !isTransitioning)
         {
             animator.SetLayerWeight(behitLayerIndex, 0f);
+        }
+        
+        if (Health <= 0 && !isDead)
+        {
+            isDead = true;
+            animator.SetTrigger("Dead");
         }
     }
     
@@ -160,6 +168,7 @@ public class BeAttack : MonoBehaviour
         
         if (Health <= 0)
         {
+            animator.SetTrigger("Dead");
             Debug.Log("角色死亡！");
         }
     }
