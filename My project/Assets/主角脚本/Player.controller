@@ -9518,6 +9518,9 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Behit_Down
     m_EventTreshold: 0
+  - m_ConditionMode: 3
+    m_ConditionEvent: Health
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -31242170957583318}
   m_Solo: 0

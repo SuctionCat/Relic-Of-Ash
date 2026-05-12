@@ -46,6 +46,15 @@ public class BeAttack : MonoBehaviour
             }
         }
         animator.SetFloat("Health", Health);
+        
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.SetHealth(Health);
+        }
+        else
+        {
+            Debug.LogWarning("StateManager 未找到，请确保场景中有 StateManager");
+        }
     }
     
     void Update()
@@ -146,6 +155,12 @@ public class BeAttack : MonoBehaviour
         }
         
         animator.SetFloat("Health", Health);
+        
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.SetHealth(Health);
+        }
+        
         Debug.Log($"当前生命值: {Health}");
         
         if (Health <= 0)
@@ -164,6 +179,12 @@ public class BeAttack : MonoBehaviour
         Debug.Log("受到击倒攻击！");
         
         animator.SetFloat("Health", Health);
+        
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.SetHealth(Health);
+        }
+        
         Debug.Log($"当前生命值: {Health}");
         
         if (Health <= 0)
@@ -197,5 +218,24 @@ public class BeAttack : MonoBehaviour
         }
         animator.SetLayerWeight(behitLayerIndex, targetWeight);
         isTransitioning = false;
+    }
+    
+    public void OnDeathAnimationEnd()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.PlayerRespawn();
+            Debug.Log("动画事件触发：调用玩家重生");
+        }
+        else
+        {
+            Debug.LogWarning("GameManager.Instance 为空，无法触发重生");
+        }
+    }
+    
+    public void ResetDeadState()
+    {
+        isDead = false;
+        Debug.Log("BeAttack: 已重置死亡状态");
     }
 }

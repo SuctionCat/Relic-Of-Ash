@@ -17,6 +17,16 @@ public class WeaponSwitcher : MonoBehaviour
         
         // 初始化：告诉动画器当前是第几把武器
         animator.SetInteger("WeaponIndex", currentWeaponIndex);
+        
+        // 同步武器索引到StateManager
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.SetWeaponIndex(currentWeaponIndex);
+        }
+        else
+        {
+            Debug.LogWarning("StateManager 未找到，请确保场景中有 StateManager");
+        }
     }
 
     void Update()
@@ -52,5 +62,11 @@ public class WeaponSwitcher : MonoBehaviour
 
         // 3. 将新索引发送给 Animator
         animator.SetInteger("WeaponIndex", currentWeaponIndex);
+        
+        // 4. 同步武器索引到StateManager
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.SetWeaponIndex(currentWeaponIndex);
+        }
     }
 }

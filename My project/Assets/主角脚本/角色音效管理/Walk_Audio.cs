@@ -25,8 +25,6 @@ public class Walk_Audio : MonoBehaviour
     private Animator _animator;
     private AudioSource _audioSource;
     private AnimationClip _currentAnimationClip;
-    private bool _isInWalkAnimation = false;
-    private bool _isInRunAnimation = false;
 
     void Awake()
     {
@@ -73,8 +71,6 @@ public class Walk_Audio : MonoBehaviour
                 _audioSource.loop = true;
                 _audioSource.Play();
             }
-            _isInWalkAnimation = true;
-            _isInRunAnimation = false;
         }
         else if (isCurrentlyInRunAnim && runSound != null)
         {
@@ -84,8 +80,6 @@ public class Walk_Audio : MonoBehaviour
                 _audioSource.loop = true;
                 _audioSource.Play();
             }
-            _isInRunAnimation = true;
-            _isInWalkAnimation = false;
         }
         else
         {
@@ -93,8 +87,6 @@ public class Walk_Audio : MonoBehaviour
             {
                 _audioSource.Stop();
             }
-            _isInWalkAnimation = false;
-            _isInRunAnimation = false;
         }
     }
 }
