@@ -154,7 +154,7 @@ Material:
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
-    - _Roughness: 3.78
+    - _Roughness: 31.3
     - _Saturation: 1
     - _Speed: 0.7
     - _SrcBlend: 1
