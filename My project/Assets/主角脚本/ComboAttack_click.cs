@@ -17,6 +17,9 @@ public class ComboByTime : MonoBehaviour
 
     void Update()
     {
+        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+            return;
+        
         // 获取当前动画状态信息
         currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
