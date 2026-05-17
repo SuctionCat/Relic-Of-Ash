@@ -28,31 +28,25 @@ public class PausePanel : BasePanel
         
         if (continueButton != null)
         {
-            continueButton.interactable = true;
             continueButton.onClick.AddListener(ContinueButtonClick);
         }
         if (mainMenuButton != null)
         {
-            mainMenuButton.interactable = true;
             mainMenuButton.onClick.AddListener(MainMenuButtonClick);
         }
         if (settingsButton != null)
         {
-            settingsButton.interactable = true;
             settingsButton.onClick.AddListener(SettingsButtonClick);
         }
-
-        UIManager.GetInstance().DisableAllPanelsExcept(this);
-
+        
         CanvasGroup canvasGroup = UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj);
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
-        
-        Time.timeScale = 0.0f;
-        
+
         isPaused = true;
         justOpened = true;
         
+        GameRoot.GetInstance().EnterProtectMode();
         GameRoot.GetInstance().RegisterUpdateMethod(HandleESCInput);
     }
     
@@ -84,7 +78,7 @@ public class PausePanel : BasePanel
         if(isPaused)
         {
             UIManager.GetInstance().RestorePreviousPanelInteractivity();
-            Time.timeScale = 1.0f;
+            GameRoot.GetInstance().ExitProtectMode();
             GameRoot.GetInstance().UIManager_Root.Pop(false);
             isPaused = false;
             GameRoot.GetInstance().UnregisterUpdateMethod(HandleESCInput);
@@ -130,17 +124,16 @@ public class PausePanel : BasePanel
         
         if (UIManager.GetInstance() != null)
             UIManager.GetInstance().RestorePreviousPanelInteractivity();
-        
-        Time.timeScale = 1.0f;
-        isPaused = false;
     }
     
     public override void OnDestroy()
     {
         GameRoot.GetInstance().UnregisterUpdateMethod(HandleESCInput);
         
-        if(Time.timeScale == 0.0f)
-            Time.timeScale = 1.0f;
+        if(isPaused)
+        {
+            GameRoot.GetInstance().ExitProtectMode();
+        }
         
         base.OnDestroy();
     }

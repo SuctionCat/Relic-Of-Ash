@@ -53,6 +53,9 @@ public class ThirdPersonController : MonoBehaviour
 
     void Update()
     {
+        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+            return;
+        
         HandleInput();
         
         // 🟢 只有在索敌模式下，才每帧尝试更新最近的目标

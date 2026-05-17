@@ -430,10 +430,9 @@ public StartPanel():base(UIPanelType)
     }
     private void LoadButtonClick()
     {
-        // 播放点击音效
         AudioManager.PlayClick();
         Scene2 scene2 = new Scene2();
-        GameRoot.GetInstance().ScenesControl_Root.LoadScene(scene2.SceneName,scene2);
+        GameRoot.GetInstance().ScenesControl_Root.LoadSceneAsync(scene2.SceneName, scene2);
     }
     public override void OnEnable()
     {

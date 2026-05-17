@@ -9,6 +9,34 @@ public class PlayerStatsPanel : BasePanel
     private static string Path="Panel/PlayerStatsPanel";
     public static readonly UITepy UIPanelType = new UITepy(Path,Name);
 
+    // 血量相关
+    [Header("血量设置")]
+    public float maxHealth = 100f;
+    public float currentHealth = 100f;
+    
+    // 护盾相关
+    [Header("护盾设置")]
+    public float maxShield = 100f;
+    public float currentShield = 100f;
+    
+    // 血量回复
+    [Header("回复设置")]
+    public float healthRegenRate = 1f;
+    public float shieldRegenRate = 2f;
+    public float regenDelay = 3f;
+    private float lastDamageTime = 0f;
+    
+    // UI组件引用
+    private Image healthBarImage;
+    private Image shieldBarImage;
+    private Text healthText;
+    private Text shieldText;
+    
+    // 动画相关
+    private float targetHealthPercent = 1f;
+    private float targetShieldPercent = 1f;
+    private float smoothSpeed = 5f;
+    
     // 技能按钮引用
     private Button buttonE;
     private Button buttonQ;
@@ -34,6 +62,21 @@ public PlayerStatsPanel():base(UIPanelType)
     {
         base.ONStart();
         UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
+        
+        // 获取血量UI组件
+        healthBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "HealthBar");
+        shieldBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "ShieldBar");
+        healthText = UImchud.GetInstance().GetOrAddComponent<Text>(ActiveObj, "HealthText");
+        shieldText = UImchud.GetInstance().GetOrAddComponent<Text>(ActiveObj, "ShieldText");
+        
+        // 初始化血量和护盾
+        currentHealth = maxHealth;
+        currentShield = maxShield;
+        targetHealthPercent = 1f;
+        targetShieldPercent = 1f;
+        
+        // 更新UI显示
+        UpdateHealthUI();
         
         // 获取技能按钮引用
         buttonE = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonE");
@@ -66,6 +109,9 @@ public PlayerStatsPanel():base(UIPanelType)
         
         // 注册Update方法到游戏循环
         GameRoot.GetInstance().RegisterUpdateMethod(Update);
+        
+        // 注册全局伤害事件监听
+        GameRoot.GetInstance().RegisterUpdateMethod(CheckDamageEvents);
     }
     
     private void OnButtonEClick()
@@ -99,6 +145,112 @@ public PlayerStatsPanel():base(UIPanelType)
             
             // 这里可以添加技能Q的具体逻辑
             Debug.Log("技能Q被使用");
+        }
+    }
+    
+    // 受到伤害
+    public void TakeDamage(float damage)
+    {
+        lastDamageTime = Time.time;
+        
+        // 先扣护盾
+        if(currentShield > 0)
+        {
+            if(currentShield >= damage)
+            {
+                currentShield -= damage;
+                damage = 0;
+            }
+            else
+            {
+                damage -= currentShield;
+                currentShield = 0;
+            }
+        }
+        
+        // 再扣血量
+        if(damage > 0 && currentHealth > 0)
+        {
+            currentHealth = Mathf.Max(0, currentHealth - damage);
+        }
+        
+        // 更新目标百分比
+        targetHealthPercent = currentHealth / maxHealth;
+        targetShieldPercent = currentShield / maxShield;
+        
+        Debug.Log($"受到伤害: {damage}, 当前血量: {currentHealth}, 当前护盾: {currentShield}");
+        
+        // 检查是否死亡
+        if(currentHealth <= 0)
+        {
+            OnDeath();
+        }
+    }
+    
+    // 回复血量
+    public void Heal(float amount)
+    {
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        targetHealthPercent = currentHealth / maxHealth;
+    }
+    
+    // 回复护盾
+    public void RestoreShield(float amount)
+    {
+        currentShield = Mathf.Min(maxShield, currentShield + amount);
+        targetShieldPercent = currentShield / maxShield;
+    }
+    
+    // 死亡处理
+    private void OnDeath()
+    {
+        Debug.Log("玩家死亡！");
+        // 这里可以添加死亡逻辑，比如重新开始游戏或显示死亡面板
+    }
+    
+    // 更新血量UI
+    private void UpdateHealthUI()
+    {
+        if(healthBarImage != null)
+        {
+            healthBarImage.fillAmount = Mathf.MoveTowards(healthBarImage.fillAmount, targetHealthPercent, Time.deltaTime * smoothSpeed);
+        }
+        
+        if(shieldBarImage != null)
+        {
+            shieldBarImage.fillAmount = Mathf.MoveTowards(shieldBarImage.fillAmount, targetShieldPercent, Time.deltaTime * smoothSpeed);
+        }
+        
+        if(healthText != null)
+        {
+            healthText.text = Mathf.Ceil(currentHealth).ToString();
+        }
+        
+        if(shieldText != null)
+        {
+            shieldText.text = Mathf.Ceil(currentShield).ToString();
+        }
+    }
+    
+    // 检查伤害事件（用于测试）
+    private void CheckDamageEvents()
+    {
+        // 按H键受到伤害（测试用）
+        if(Input.GetKeyDown(KeyCode.H))
+        {
+            TakeDamage(20f);
+        }
+        
+        // 按J键回复血量（测试用）
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            Heal(15f);
+        }
+        
+        // 按K键回复护盾（测试用）
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            RestoreShield(20f);
         }
     }
     
@@ -158,6 +310,22 @@ public PlayerStatsPanel():base(UIPanelType)
                 {
                     cooldownTextQ.gameObject.SetActive(false);
                 }
+            }
+        }
+        
+        // 更新血量UI
+        UpdateHealthUI();
+        
+        // 自动回复逻辑
+        if(Time.time - lastDamageTime >= regenDelay)
+        {
+            if(currentHealth < maxHealth)
+            {
+                Heal(healthRegenRate * Time.deltaTime);
+            }
+            if(currentShield < maxShield)
+            {
+                RestoreShield(shieldRegenRate * Time.deltaTime);
             }
         }
     }

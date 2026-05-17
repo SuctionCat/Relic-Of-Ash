@@ -39,6 +39,9 @@ public SettingPanel():base(UIPanelType)
             sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", 100.0f);
             sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
         }
+        
+        // 进入保护模式
+        GameRoot.GetInstance().EnterProtectMode();
     }
     
     private void OnMusicVolumeChanged(float value)
@@ -69,6 +72,7 @@ public SettingPanel():base(UIPanelType)
     {
         // 播放点击音效
         AudioManager.PlayClick();
+        GameRoot.GetInstance().ExitProtectMode();
         GameRoot.GetInstance().UIManager_Root.Pop(false);
     }
     

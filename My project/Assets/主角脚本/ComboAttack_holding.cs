@@ -15,6 +15,9 @@ public class ComboAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+            return;
+        
         if (Input.GetMouseButton(0))
         {
             animator.SetBool("Attack", true);

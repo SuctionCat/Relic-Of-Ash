@@ -21,6 +21,13 @@ public class GameRoot : MonoBehaviour
 
     // 当前场景名称
     private string currentSceneName = "";
+    
+    // 全局暂停状态
+    private bool isGamePaused = false;
+    public bool IsGamePaused { get => isGamePaused; set => isGamePaused = value; }
+    
+    // 保护面板计数
+    private int protectPanelCount = 0;
 
     // 存储需要在Update中调用的方法
     private List<System.Action> updateMethods = new List<System.Action>();
@@ -48,6 +55,31 @@ public class GameRoot : MonoBehaviour
     {
         currentSceneName = sceneName;
         Debug.Log($"当前场景设置为: {sceneName}");
+    }
+    
+    // 进入保护模式
+    public void EnterProtectMode()
+    {
+        protectPanelCount++;
+        
+        if(protectPanelCount == 1)
+        {
+            IsGamePaused = true;
+            Time.timeScale = 0.0f;
+        }
+    }
+    
+    // 退出保护模式
+    public void ExitProtectMode()
+    {
+        protectPanelCount--;
+        
+        if(protectPanelCount <= 0)
+        {
+            protectPanelCount = 0;
+            IsGamePaused = false;
+            Time.timeScale = 1.0f;
+        }
     }
 
     // 处理ESC键打开对应面板
