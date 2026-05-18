@@ -5,7 +5,32 @@ using UnityEngine;
 public class BeAttack : MonoBehaviour
 {
     private Animator animator;
-    public float Health = 1000f;
+    
+    [Header("生命值")]
+    [Tooltip("当前生命值（会自动同步到 StateManager）")]
+    [SerializeField]
+    private float health = 1000f;
+    
+    public float Health
+    {
+        get
+        {
+            if (StateManager.instance != null)
+            {
+                return StateManager.instance.currentHealth;
+            }
+            return health;
+        }
+        set
+        {
+            health = value;
+            if (StateManager.instance != null)
+            {
+                StateManager.instance.currentHealth = value;
+            }
+            animator?.SetFloat("Health", value);
+        }
+    }
     
     [Header("受击图层设置")]
     public string behitLayerName = "Behit";
@@ -45,15 +70,18 @@ public class BeAttack : MonoBehaviour
                 Debug.LogWarning($"未找到名为 {behitLayerName} 的动画图层");
             }
         }
-        animator.SetFloat("Health", Health);
-        
+    }
+    
+    void Start()
+    {
         if (StateManager.instance != null)
         {
-            StateManager.instance.SetHealth(Health);
+            animator.SetFloat("Health", StateManager.instance.currentHealth);
         }
         else
         {
-            Debug.LogWarning("StateManager 未找到，请确保场景中有 StateManager");
+            Debug.LogWarning("StateManager 未找到，使用默认生命值");
+            animator.SetFloat("Health", health);
         }
     }
     
@@ -154,13 +182,6 @@ public class BeAttack : MonoBehaviour
             animator.SetTrigger("BeAttacking");
         }
         
-        animator.SetFloat("Health", Health);
-        
-        if (StateManager.instance != null)
-        {
-            StateManager.instance.SetHealth(Health);
-        }
-        
         Debug.Log($"当前生命值: {Health}");
         
         if (Health <= 0)
@@ -177,13 +198,6 @@ public class BeAttack : MonoBehaviour
         
         animator.SetTrigger("Behit_Down");
         Debug.Log("受到击倒攻击！");
-        
-        animator.SetFloat("Health", Health);
-        
-        if (StateManager.instance != null)
-        {
-            StateManager.instance.SetHealth(Health);
-        }
         
         Debug.Log($"当前生命值: {Health}");
         

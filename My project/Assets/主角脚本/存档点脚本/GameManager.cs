@@ -123,6 +123,16 @@ public class GameManager : MonoBehaviour
                     animator.Update(0);
                     animator.applyRootMotion = true;
                 }
+                
+                WeaponController weaponController = player.GetComponent<WeaponController>();
+                if (weaponController != null)
+                {
+                    ResetWeaponState(weaponController, initialWeaponIndex);
+                }
+                else
+                {
+                    Debug.LogWarning("GameManager: 未找到WeaponController组件，无法重置武器状态");
+                }
             }
 
             Debug.Log("GameManager: 已重置玩家状态 - 生命值: " + initialHealth + ", 武器索引: " + initialWeaponIndex);
@@ -130,6 +140,30 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogWarning("GameManager: PlayerMemento或StateManager未找到，无法重置玩家状态");
+        }
+    }
+    
+    private void ResetWeaponState(WeaponController weaponController, int weaponIndex)
+    {
+        weaponController.Move_Sword_To_Waist();
+        weaponController.Move_Katana_To_Waist();
+        weaponController.Move_Stick_To_Waist();
+        
+        switch (weaponIndex)
+        {
+            case 0:
+                weaponController.Move_Sword_To_Hand();
+                break;
+            case 1:
+                weaponController.Move_Katana_To_Hand();
+                break;
+            case 2:
+                weaponController.Move_Stick_To_Hand();
+                break;
+            default:
+                weaponController.Move_Sword_To_Hand();
+                Debug.LogWarning("GameManager: 未知的武器索引 " + weaponIndex + "，默认使用剑");
+                break;
         }
     }
 }
