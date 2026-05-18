@@ -2241,6 +2241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b93ea0f5d06d2448823e18f9c699fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentHealth: 100
 --- !u!114 &1393187768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2578,7 +2579,7 @@ GameObject:
   - component: {fileID: 1654726207}
   - component: {fileID: 1654726206}
   - component: {fileID: 1654726205}
-  - component: {fileID: 1654726204}
+  - component: {fileID: 1654726208}
   m_Layer: 0
   m_Name: Cube (3)
   m_TagString: Untagged
@@ -2586,27 +2587,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1654726204
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1654726203}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1654726205
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2672,6 +2652,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1654726208
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654726203}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2052935123 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3269502298984739974, guid: a413127c94cb55843a1393332355eba0,
@@ -2839,6 +2840,111 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: realplayer5.0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.size
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[0]
+      value: Combo_Attack_01_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[1]
+      value: Combo_Attack_01_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[2]
+      value: Combo_Attack_03_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[3]
+      value: Combo_Attack_01_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[4]
+      value: Combo_Attack_01_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[5]
+      value: Combo_Attack_01_04
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[6]
+      value: Combo_Attack_03_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[7]
+      value: Combo_Attack_01_01_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[8]
+      value: Combo_Attack_01_02_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[9]
+      value: Combo_Attack_05_02_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[10]
+      value: Combo_Attack_05_04_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[11]
+      value: Combo_Attack_01_03_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[12]
+      value: Combo_Attack_01_04_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[13]
+      value: Combo_Attack_03_02_V02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[14]
+      value: combo_02_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[15]
+      value: combo_02_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[16]
+      value: combo_02_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[17]
+      value: combo_02_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[18]
+      value: combo_06
+      objectReference: {fileID: 0}
+    - target: {fileID: 3773095557066565459, guid: c7cdb4392ccbd554bbe256f9864db3de,
+        type: 3}
+      propertyPath: attackAnimationNames.Array.data[19]
+      value: attack_02
       objectReference: {fileID: 0}
     - target: {fileID: 7250232587652720992, guid: c7cdb4392ccbd554bbe256f9864db3de,
         type: 3}

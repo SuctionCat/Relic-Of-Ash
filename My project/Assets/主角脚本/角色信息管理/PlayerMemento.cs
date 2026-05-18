@@ -17,16 +17,12 @@ public class PlayerMemento : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            SaveInitialState();
         }
         else
         {
             Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-        SaveInitialState();
     }
 
     public void SaveInitialState()
