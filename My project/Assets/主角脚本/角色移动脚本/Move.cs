@@ -75,8 +75,8 @@ public class ThirdPersonController : MonoBehaviour
 
     void Update()
     {
-        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
-            return;
+        //if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+        //    return;
         
         HandleInput();
         
