@@ -1,39 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ComboAttack : MonoBehaviour
 {
     private Animator animator;
+    private bool previousAttack = false;
+    private bool previousBlock = false;
+    private int attackHash;
+    private int blockHash;
 
-    // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
+        attackHash = Animator.StringToHash("Attack");
+        blockHash = Animator.StringToHash("Block");
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
-            return;
+        //if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+        //    return;
         
-        if (Input.GetMouseButton(0))
+        bool isAttack = Input.GetMouseButton(0);
+        bool isBlock = Input.GetMouseButton(1);
+
+        if (isAttack != previousAttack)
         {
-            animator.SetBool("Attack", true);
-        }
-        else
-        {
-            animator.SetBool("Attack", false);
+            animator.SetBool(attackHash, isAttack);
+            previousAttack = isAttack;
         }
 
-        if (Input.GetMouseButton(1))
+        if (isBlock != previousBlock)
         {
-            animator.SetBool("Block", true);
-        }
-        else
-        {
-            animator.SetBool("Block", false);
+            animator.SetBool(blockHash, isBlock);
+            previousBlock = isBlock;
         }
     }
 }

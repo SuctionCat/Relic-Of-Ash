@@ -1,45 +1,98 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Run_Speed : MonoBehaviour
 {
     private Animator animator;
+    
+    private bool previousIsRunning = false;
+    private bool previousMoveHolding = false;
+    private bool previousIsJumping = false;
+    private bool previousAltHolding = false;
+    private bool previousSlide = false;
+    private bool previousQHolding = false;
+    private bool previousEHolding = false;
+    
+    private int isRunningHash;
+    private int moveHoldingHash;
+    private int toWalkHash;
+    private int isJumpingHash;
+    private int altHoldingHash;
+    private int slideHash;
+    private int qHoldingHash;
+    private int eHoldingHash;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+        isRunningHash = Animator.StringToHash("isRunning");
+        moveHoldingHash = Animator.StringToHash("Move_holding");
+        toWalkHash = Animator.StringToHash("to_walk");
+        isJumpingHash = Animator.StringToHash("isJumping");
+        altHoldingHash = Animator.StringToHash("Alt_holding");
+        slideHash = Animator.StringToHash("Slide");
+        qHoldingHash = Animator.StringToHash("Q_holding");
+        eHoldingHash = Animator.StringToHash("E_holding");
     }
 
     void Update()
     {
         bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        animator.SetBool("isRunning", isRunning);
+        if (isRunning != previousIsRunning)
+        {
+            animator.SetBool(isRunningHash, isRunning);
+            previousIsRunning = isRunning;
+        }
+
         bool isWHolding = Input.GetKey(KeyCode.W);
-        //animator.SetBool("W_holding", isWHolding);
         bool isAHolding = Input.GetKey(KeyCode.A);
-        //animator.SetBool("A_holding", isAHolding);
         bool isSHolding = Input.GetKey(KeyCode.S);
-        //animator.SetBool("S_holding", isSHolding);
         bool isDHolding = Input.GetKey(KeyCode.D);
-        //animator.SetBool("D_holding", isDHolding);
         bool isMoveHolding = isWHolding || isAHolding || isSHolding || isDHolding;
-        animator.SetBool("Move_holding", isMoveHolding);
+        if (isMoveHolding != previousMoveHolding)
+        {
+            animator.SetBool(moveHoldingHash, isMoveHolding);
+            previousMoveHolding = isMoveHolding;
+        }
+
         if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
         {
-            bool currentToWalk = animator.GetBool("to_walk");
-            animator.SetBool("to_walk", !currentToWalk);
+            bool currentToWalk = animator.GetBool(toWalkHash);
+            animator.SetBool(toWalkHash, !currentToWalk);
         }
+
         bool isJumping = Input.GetKey(KeyCode.Space);
-        animator.SetBool("isJumping", isJumping);
+        if (isJumping != previousIsJumping)
+        {
+            animator.SetBool(isJumpingHash, isJumping);
+            previousIsJumping = isJumping;
+        }
+
         bool isAltHolding = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
-        animator.SetBool("Alt_holding", isAltHolding);
-        bool Slide = Input.GetKey(KeyCode.C);
-        animator.SetBool("Slide", Slide);
-        bool Q_holding = Input.GetKey(KeyCode.Q);
-        animator.SetBool("Q_holding", Q_holding);
-        bool E_holding = Input.GetKey(KeyCode.E);
-        animator.SetBool("E_holding", E_holding);
+        if (isAltHolding != previousAltHolding)
+        {
+            animator.SetBool(altHoldingHash, isAltHolding);
+            previousAltHolding = isAltHolding;
+        }
+
+        bool slide = Input.GetKey(KeyCode.C);
+        if (slide != previousSlide)
+        {
+            animator.SetBool(slideHash, slide);
+            previousSlide = slide;
+        }
+
+        bool qHolding = Input.GetKey(KeyCode.Q);
+        if (qHolding != previousQHolding)
+        {
+            animator.SetBool(qHoldingHash, qHolding);
+            previousQHolding = qHolding;
+        }
+
+        bool eHolding = Input.GetKey(KeyCode.E);
+        if (eHolding != previousEHolding)
+        {
+            animator.SetBool(eHoldingHash, eHolding);
+            previousEHolding = eHolding;
+        }
     }
 }
