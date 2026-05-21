@@ -102,9 +102,11 @@ public class GameManager : MonoBehaviour
         if (PlayerMemento.instance != null && StateManager.instance != null)
         {
             float initialHealth = PlayerMemento.instance.GetInitialHealth();
+            float initialShield = PlayerMemento.instance.GetInitialShield();
             int initialWeaponIndex = PlayerMemento.instance.GetInitialWeaponIndex();
 
             StateManager.instance.SetHealth(initialHealth);
+            StateManager.instance.SetShield(initialShield);
             StateManager.instance.SetWeaponIndex(initialWeaponIndex);
 
             if (player != null)
@@ -135,7 +137,7 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            Debug.Log("GameManager: 已重置玩家状态 - 生命值: " + initialHealth + ", 武器索引: " + initialWeaponIndex);
+            Debug.Log("GameManager: 已重置玩家状态 - 生命值: " + initialHealth + ", 护盾值: " + initialShield + ", 武器索引: " + initialWeaponIndex);
         }
         else
         {

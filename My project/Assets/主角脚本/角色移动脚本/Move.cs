@@ -244,7 +244,17 @@ public class ThirdPersonController : MonoBehaviour
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
         
         // 检测当前动画是否在攻击动画列表中
-        isAttacking = IsAttackAnimation(currentState);
+        bool isCurrentlyAttack = IsAttackAnimation(currentState);
+
+        // 1. 攻击动画结束时，重置攻击状态
+        if (isCurrentlyAttack && currentState.normalizedTime >= 0.78f)
+        {
+            isAttacking = false;
+        }
+        else
+        {
+            isAttacking = isCurrentlyAttack;
+        }
     }
 
     // 🟢 检查当前动画是否为攻击动画（使用Hash缓存，性能提升3-5倍）

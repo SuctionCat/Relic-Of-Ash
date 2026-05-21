@@ -36,6 +36,9 @@ public class Run_Speed : MonoBehaviour
 
     void Update()
     {
+        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+            return;
+        
         bool isRunning = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         if (isRunning != previousIsRunning)
         {
@@ -82,16 +85,34 @@ public class Run_Speed : MonoBehaviour
         }
 
         bool qHolding = Input.GetKey(KeyCode.Q);
+        bool canUseQ = StateManager.instance != null && StateManager.instance.IsQReady();
+        
         if (qHolding != previousQHolding)
         {
-            animator.SetBool(qHoldingHash, qHolding);
+            if (qHolding && canUseQ)
+            {
+                animator.SetBool(qHoldingHash, true);
+            }
+            else if (!qHolding)
+            {
+                animator.SetBool(qHoldingHash, false);
+            }
             previousQHolding = qHolding;
         }
 
         bool eHolding = Input.GetKey(KeyCode.E);
+        bool canUseE = StateManager.instance != null && StateManager.instance.IsEReady();
+        
         if (eHolding != previousEHolding)
         {
-            animator.SetBool(eHoldingHash, eHolding);
+            if (eHolding && canUseE)
+            {
+                animator.SetBool(eHoldingHash, true);
+            }
+            else if (!eHolding)
+            {
+                animator.SetBool(eHoldingHash, false);
+            }
             previousEHolding = eHolding;
         }
     }

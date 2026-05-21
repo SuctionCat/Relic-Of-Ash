@@ -32,6 +32,32 @@ public class BeAttack : MonoBehaviour
         }
     }
     
+    [Header("护盾")]
+    [Tooltip("当前护盾值（会自动同步到 StateManager）")]
+    [SerializeField]
+    private float shield = 200f;
+    
+    public float Shield
+    {
+        get
+        {
+            if (StateManager.instance != null)
+            {
+                return StateManager.instance.currentShield;
+            }
+            return shield;
+        }
+        set
+        {
+            shield = value;
+            if (StateManager.instance != null)
+            {
+                StateManager.instance.currentShield = value;
+            }
+            animator?.SetFloat("Shield", value);
+        }
+    }
+    
     [Header("受击图层设置")]
     public string behitLayerName = "Behit";
     private int behitLayerIndex = -1;
@@ -170,7 +196,14 @@ public class BeAttack : MonoBehaviour
     {
         StopAttackEffects();
         
-        Health -= damageAmount;
+        // 优先减少护盾
+        float remainingDamage = ApplyDamageToShield(damageAmount);
+        
+        // 如果护盾不足以抵挡全部伤害，剩余伤害减少生命值
+        if (remainingDamage > 0)
+        {
+            Health -= remainingDamage;
+        }
         
         if (isLargeAttack)
         {
@@ -182,7 +215,7 @@ public class BeAttack : MonoBehaviour
             animator.SetTrigger("BeAttacking");
         }
         
-        Debug.Log($"当前生命值: {Health}");
+        Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
         
         if (Health <= 0)
         {
@@ -194,12 +227,19 @@ public class BeAttack : MonoBehaviour
     {
         StopAttackEffects();
         
-        Health -= damageAmount;
+        // 优先减少护盾
+        float remainingDamage = ApplyDamageToShield(damageAmount);
+        
+        // 如果护盾不足以抵挡全部伤害，剩余伤害减少生命值
+        if (remainingDamage > 0)
+        {
+            Health -= remainingDamage;
+        }
         
         animator.SetTrigger("Behit_Down");
         Debug.Log("受到击倒攻击！");
         
-        Debug.Log($"当前生命值: {Health}");
+        Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
         
         if (Health <= 0)
         {
@@ -215,6 +255,26 @@ public class BeAttack : MonoBehaviour
         foreach (string key in attackEffectKeys)
         {
             comboEffectManager.StopEffect(key);
+        }
+    }
+    
+    private float ApplyDamageToShield(float damageAmount)
+    {
+        if (Shield <= 0)
+        {
+            return damageAmount;
+        }
+        
+        if (damageAmount <= Shield)
+        {
+            Shield -= damageAmount;
+            return 0f;
+        }
+        else
+        {
+            float remainingDamage = damageAmount - Shield;
+            Shield = 0f;
+            return remainingDamage;
         }
     }
     

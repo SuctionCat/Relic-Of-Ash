@@ -8,8 +8,17 @@ public class StateManager : MonoBehaviour
 
     [Header("角色状态")]
     public float currentHealth;
+    public float currentShield;
+    public float maxShield;
     private int currentWeaponIndex;
     private string currentWeaponName;
+
+    [Header("技能冷却时间")]
+    public float qCooldownTime = 2f;
+    public float eCooldownTime = 3f;
+    
+    private float qCooldownRemaining;
+    private float eCooldownRemaining;
 
     public delegate void WeaponIndexChanged(int newIndex);
     public event WeaponIndexChanged OnWeaponIndexChanged;
@@ -26,7 +35,7 @@ public class StateManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -37,6 +46,28 @@ public class StateManager : MonoBehaviour
     void Start()
     {
         InitializeFromPlayerMemento();
+        qCooldownRemaining = 0f;
+        eCooldownRemaining = 0f;
+    }
+    
+    void Update()
+    {
+        UpdateCooldowns();
+    }
+    
+    private void UpdateCooldowns()
+    {
+        if (qCooldownRemaining > 0)
+        {
+            qCooldownRemaining -= Time.deltaTime;
+            if (qCooldownRemaining < 0) qCooldownRemaining = 0;
+        }
+        
+        if (eCooldownRemaining > 0)
+        {
+            eCooldownRemaining -= Time.deltaTime;
+            if (eCooldownRemaining < 0) eCooldownRemaining = 0;
+        }
     }
     
     private void InitializeFromPlayerMemento()
@@ -44,12 +75,16 @@ public class StateManager : MonoBehaviour
         if (PlayerMemento.instance != null)
         {
             currentHealth = PlayerMemento.instance.GetInitialHealth();
-            Debug.Log($"StateManager: 已从 PlayerMemento 初始化生命值为 {currentHealth}");
+            currentShield = PlayerMemento.instance.GetInitialShield();
+            maxShield = PlayerMemento.instance.GetInitialMaxShield();
+            Debug.Log($"StateManager: 已从 PlayerMemento 初始化生命值为 {currentHealth}，护盾值为 {currentShield}");
         }
         else
         {
             currentHealth = 1000f;
-            Debug.LogWarning("PlayerMemento 未找到，使用默认生命值");
+            currentShield = 200f;
+            maxShield = 200f;
+            Debug.LogWarning("PlayerMemento 未找到，使用默认生命值和护盾值");
         }
     }
 
@@ -57,6 +92,28 @@ public class StateManager : MonoBehaviour
     {
         currentHealth = health;
         Debug.Log($"StateManager: 生命值已更新为 {currentHealth}");
+    }
+
+    public void SetShield(float shield)
+    {
+        currentShield = Mathf.Clamp(shield, 0f, maxShield);
+        Debug.Log($"StateManager: 护盾值已更新为 {currentShield}");
+    }
+
+    public void AddShield(float amount)
+    {
+        currentShield = Mathf.Clamp(currentShield + amount, 0f, maxShield);
+        Debug.Log($"StateManager: 护盾值增加 {amount}，当前护盾值为 {currentShield}");
+    }
+
+    public float GetShield()
+    {
+        return currentShield;
+    }
+
+    public float GetMaxShield()
+    {
+        return maxShield;
     }
 
     public void SetWeaponIndex(int index)
@@ -81,5 +138,37 @@ public class StateManager : MonoBehaviour
     public string GetWeaponName()
     {
         return currentWeaponName;
+    }
+
+    public bool IsQReady()
+    {
+        return qCooldownRemaining <= 0f;
+    }
+
+    public bool IsEReady()
+    {
+        return eCooldownRemaining <= 0f;
+    }
+
+    public void StartQCooldown()
+    {
+        qCooldownRemaining = qCooldownTime;
+        Debug.Log($"StateManager: Q技能开始冷却，冷却时间 {qCooldownTime}秒");
+    }
+
+    public void StartECooldown()
+    {
+        eCooldownRemaining = eCooldownTime;
+        Debug.Log($"StateManager: E技能开始冷却，冷却时间 {eCooldownTime}秒");
+    }
+
+    public float GetQCooldownRemaining()
+    {
+        return qCooldownRemaining;
+    }
+
+    public float GetECooldownRemaining()
+    {
+        return eCooldownRemaining;
     }
 }
