@@ -40,6 +40,9 @@ public class ThirdPersonCamera : MonoBehaviour
 
         // 初始化角度
         yaw = transform.eulerAngles.y;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void LateUpdate()

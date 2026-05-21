@@ -19,8 +19,8 @@ public class ComboByTime : MonoBehaviour
 
     void Update()
     {
-        //if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
-        //    return;
+        if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
+            return;
         
         currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
 

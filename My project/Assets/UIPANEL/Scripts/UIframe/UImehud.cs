@@ -45,7 +45,7 @@ public class UImchud
         return GetOrAddComponent<T>(child);
     }
     public GameObject FindObjectInChill(GameObject panel, string ChillName)
-    {
+   {
        Transform[] transforms=panel.GetComponentsInChildren<Transform>();
    
        foreach(var transform in transforms)
@@ -55,8 +55,7 @@ public class UImchud
                return transform.gameObject;
            }
        }
-       Debug.Log($"未能成功获得{ChillName}物体");
-             return null;
+       return null;
    }
    public GameObject GetOrAddGameObject(GameObject panel, string ChillName)
    {

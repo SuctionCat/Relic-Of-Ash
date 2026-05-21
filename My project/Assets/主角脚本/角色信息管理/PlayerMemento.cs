@@ -8,7 +8,9 @@ public class PlayerMemento : MonoBehaviour
 
     [Header("初始状态数据")]
     public float initialMaxHealth = 1000f;
+    public float initialMaxShield = 200f;
     private float initialHealth;
+    private float initialShield;
     private int initialWeaponIndex = 0;
 
     private void Awake()
@@ -16,7 +18,7 @@ public class PlayerMemento : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
             SaveInitialState();
         }
         else
@@ -28,13 +30,19 @@ public class PlayerMemento : MonoBehaviour
     public void SaveInitialState()
     {
         initialHealth = initialMaxHealth;
+        initialShield = initialMaxShield;
         initialWeaponIndex = 0;
-        Debug.Log("PlayerMemento: 已保存初始状态 - 生命值: " + initialHealth + ", 武器索引: " + initialWeaponIndex);
+        Debug.Log("PlayerMemento: 已保存初始状态 - 生命值: " + initialHealth + ", 护盾值: " + initialShield + ", 武器索引: " + initialWeaponIndex);
     }
 
     public float GetInitialHealth()
     {
         return initialHealth;
+    }
+
+    public float GetInitialShield()
+    {
+        return initialShield;
     }
 
     public int GetInitialWeaponIndex()
@@ -45,5 +53,10 @@ public class PlayerMemento : MonoBehaviour
     public float GetInitialMaxHealth()
     {
         return initialMaxHealth;
+    }
+
+    public float GetInitialMaxShield()
+    {
+        return initialMaxShield;
     }
 }

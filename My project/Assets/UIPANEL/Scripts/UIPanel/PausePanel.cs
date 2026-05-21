@@ -77,11 +77,10 @@ public class PausePanel : BasePanel
     {
         if(isPaused)
         {
+            isPaused = false;
             UIManager.GetInstance().RestorePreviousPanelInteractivity();
             GameRoot.GetInstance().ExitProtectMode();
             GameRoot.GetInstance().UIManager_Root.Pop(false);
-            isPaused = false;
-            GameRoot.GetInstance().UnregisterUpdateMethod(HandleESCInput);
         }
     }
     
@@ -98,6 +97,12 @@ public class PausePanel : BasePanel
     
     private void HandleESCInput()
     {
+        if (UIManager.GetInstance().stack_ui.Count == 0 ||
+            UIManager.GetInstance().stack_ui.Peek() != this)
+        {
+            return;
+        }
+
         if (justOpened)
         {
             justOpened = false;
@@ -116,11 +121,15 @@ public class PausePanel : BasePanel
     public override void OnEnable()
     {
         base.OnEnable();
+        isPaused = true;
+        justOpened = true;
+        GameRoot.GetInstance().RegisterUpdateMethod(HandleESCInput);
     }
     
     public override void OnDisable()
     {
         base.OnDisable();
+        GameRoot.GetInstance().UnregisterUpdateMethod(HandleESCInput);
         
         if (UIManager.GetInstance() != null)
             UIManager.GetInstance().RestorePreviousPanelInteractivity();
