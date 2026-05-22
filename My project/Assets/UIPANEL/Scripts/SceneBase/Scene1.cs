@@ -10,6 +10,10 @@ public class Scene1 : ScenesBase
         // 设置当前场景名称
         GameRoot.GetInstance().SetCurrentSceneName(SceneName);
         
+        // 在主菜单场景中，鼠标应该可见且未锁定
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        
         // 加载 StartPanel
         GameRoot.GetInstance().UIManager_Root.Push(new StartPanel());
     }

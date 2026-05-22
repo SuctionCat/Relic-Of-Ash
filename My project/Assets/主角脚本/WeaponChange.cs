@@ -22,11 +22,27 @@ public class WeaponSwitcher : MonoBehaviour
         if (StateManager.instance != null)
         {
             StateManager.instance.SetWeaponIndex(currentWeaponIndex);
+            StateManager.instance.OnWeaponIndexChanged += HandleWeaponIndexChanged;
         }
         else
         {
             Debug.LogWarning("StateManager 未找到，请确保场景中有 StateManager");
         }
+    }
+
+    void OnDestroy()
+    {
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.OnWeaponIndexChanged -= HandleWeaponIndexChanged;
+        }
+    }
+
+    private void HandleWeaponIndexChanged(int newIndex)
+    {
+        currentWeaponIndex = newIndex;
+        animator.SetInteger("WeaponIndex", currentWeaponIndex);
+        Debug.Log($"WeaponSwitcher: 接收到武器索引变更，当前武器索引: {currentWeaponIndex}");
     }
 
     void Update()
@@ -67,6 +83,20 @@ public class WeaponSwitcher : MonoBehaviour
         if (StateManager.instance != null)
         {
             StateManager.instance.SetWeaponIndex(currentWeaponIndex);
+        }
+    }
+
+    public void SyncWeaponIndexFromStateManager()
+    {
+        if (StateManager.instance != null)
+        {
+            int newIndex = StateManager.instance.GetWeaponIndex();
+            if (newIndex != currentWeaponIndex)
+            {
+                currentWeaponIndex = newIndex;
+                animator.SetInteger("WeaponIndex", currentWeaponIndex);
+                Debug.Log($"WeaponSwitcher: 已从 StateManager 同步武器索引为 {currentWeaponIndex}");
+            }
         }
     }
 }

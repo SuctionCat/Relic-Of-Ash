@@ -5,7 +5,58 @@ using UnityEngine;
 public class BeAttack : MonoBehaviour
 {
     private Animator animator;
-    public float Health = 1000f;
+    
+    [Header("生命值")]
+    [Tooltip("当前生命值（会自动同步到 StateManager）")]
+    [SerializeField]
+    private float health = 1000f;
+    
+    public float Health
+    {
+        get
+        {
+            if (StateManager.instance != null)
+            {
+                return StateManager.instance.currentHealth;
+            }
+            return health;
+        }
+        set
+        {
+            health = value;
+            if (StateManager.instance != null)
+            {
+                StateManager.instance.currentHealth = value;
+            }
+            animator?.SetFloat("Health", value);
+        }
+    }
+    
+    [Header("护盾")]
+    [Tooltip("当前护盾值（会自动同步到 StateManager）")]
+    [SerializeField]
+    private float shield = 200f;
+    
+    public float Shield
+    {
+        get
+        {
+            if (StateManager.instance != null)
+            {
+                return StateManager.instance.currentShield;
+            }
+            return shield;
+        }
+        set
+        {
+            shield = value;
+            if (StateManager.instance != null)
+            {
+                StateManager.instance.currentShield = value;
+            }
+            animator?.SetFloat("Shield", value);
+        }
+    }
     
     [Header("受击图层设置")]
     public string behitLayerName = "Behit";
@@ -45,15 +96,18 @@ public class BeAttack : MonoBehaviour
                 Debug.LogWarning($"未找到名为 {behitLayerName} 的动画图层");
             }
         }
-        animator.SetFloat("Health", Health);
-        
+    }
+    
+    void Start()
+    {
         if (StateManager.instance != null)
         {
-            StateManager.instance.SetHealth(Health);
+            animator.SetFloat("Health", StateManager.instance.currentHealth);
         }
         else
         {
-            Debug.LogWarning("StateManager 未找到，请确保场景中有 StateManager");
+            Debug.LogWarning("StateManager 未找到，使用默认生命值");
+            animator.SetFloat("Health", health);
         }
     }
     
@@ -142,7 +196,14 @@ public class BeAttack : MonoBehaviour
     {
         StopAttackEffects();
         
-        Health -= damageAmount;
+        // 优先减少护盾
+        float remainingDamage = ApplyDamageToShield(damageAmount);
+        
+        // 如果护盾不足以抵挡全部伤害，剩余伤害减少生命值
+        if (remainingDamage > 0)
+        {
+            Health -= remainingDamage;
+        }
         
         if (isLargeAttack)
         {
@@ -154,14 +215,7 @@ public class BeAttack : MonoBehaviour
             animator.SetTrigger("BeAttacking");
         }
         
-        animator.SetFloat("Health", Health);
-        
-        if (StateManager.instance != null)
-        {
-            StateManager.instance.SetHealth(Health);
-        }
-        
-        Debug.Log($"当前生命值: {Health}");
+        Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
         
         if (Health <= 0)
         {
@@ -173,19 +227,19 @@ public class BeAttack : MonoBehaviour
     {
         StopAttackEffects();
         
-        Health -= damageAmount;
+        // 优先减少护盾
+        float remainingDamage = ApplyDamageToShield(damageAmount);
+        
+        // 如果护盾不足以抵挡全部伤害，剩余伤害减少生命值
+        if (remainingDamage > 0)
+        {
+            Health -= remainingDamage;
+        }
         
         animator.SetTrigger("Behit_Down");
         Debug.Log("受到击倒攻击！");
         
-        animator.SetFloat("Health", Health);
-        
-        if (StateManager.instance != null)
-        {
-            StateManager.instance.SetHealth(Health);
-        }
-        
-        Debug.Log($"当前生命值: {Health}");
+        Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
         
         if (Health <= 0)
         {
@@ -201,6 +255,26 @@ public class BeAttack : MonoBehaviour
         foreach (string key in attackEffectKeys)
         {
             comboEffectManager.StopEffect(key);
+        }
+    }
+    
+    private float ApplyDamageToShield(float damageAmount)
+    {
+        if (Shield <= 0)
+        {
+            return damageAmount;
+        }
+        
+        if (damageAmount <= Shield)
+        {
+            Shield -= damageAmount;
+            return 0f;
+        }
+        else
+        {
+            float remainingDamage = damageAmount - Shield;
+            Shield = 0f;
+            return remainingDamage;
         }
     }
     

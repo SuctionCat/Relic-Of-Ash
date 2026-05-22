@@ -9,7 +9,6 @@ public class ThirdPersonCamera : MonoBehaviour
 
     [Header("Settings")]
     public float mouseSensitivity = 200f;
-    public float distance = 5f;
     public float height = 1.5f;
     public float smoothSpeed = 10f;
 
@@ -18,8 +17,13 @@ public class ThirdPersonCamera : MonoBehaviour
     public float maxPitch = 60f;
     public Transform cam;
 
-    [Header("Custom Reference")]
-    public Transform customPitchReference;  // 自定义上下旋转参考对象
+    [Header("Camera Offset")]
+    public Vector3 cameraOffset = new Vector3(1.5f, 0, -5f);  // 摄像机相对于pivot的偏移（支持偏左/偏右）
+
+    [Header("Collision")]
+    public LayerMask collisionMask = ~0;   // 射线检测层（建议排除Player层）
+    public float collisionOffset = 0.3f;   // 碰撞后沿法线外推的距离
+    public float collisionSmoothSpeed = 15f; // 碰撞过渡速度
 
     // --- 🟢 索敌系统变量 ---
     private bool isTargeting = false;       // 是否开启索敌模式
@@ -34,14 +38,11 @@ public class ThirdPersonCamera : MonoBehaviour
         if (cam == null)
             cam = GetComponentInChildren<Camera>().transform;
 
-        if (customPitchReference == null)
-        {
-            // 如果没有指定自定义参考对象，就使用摄像机本身的pivot
-            customPitchReference = transform;
-        }
-
         // 初始化角度
         yaw = transform.eulerAngles.y;
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void LateUpdate()
@@ -87,26 +88,28 @@ public class ThirdPersonCamera : MonoBehaviour
             yaw = Mathf.MoveTowardsAngle(yaw, targetYaw, targetingSmoothSpeed * Time.deltaTime);
         }
 
-        // 应用旋转
-        transform.rotation = Quaternion.Euler(0, yaw, 0);
-        customPitchReference.localRotation = Quaternion.Euler(pitch, 0, 0);
+        // 应用旋转：单一pivot同时控制yaw和pitch
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
 
-        // 相机的位置平滑过渡
+        // 相机的位置平滑过渡（pivot跟随玩家）
         Vector3 targetPos = player.position + Vector3.up * height;
         transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
 
-        // 防止相机穿透角色
-        Vector3 cameraPos = cam.position;
-        RaycastHit hit;
-        Vector3 dir = (cameraPos - player.position).normalized;
-        if (Physics.Raycast(player.position, dir, out hit, distance))
-        {
-            cameraPos = hit.point;
-        }
+        // 防止相机穿透障碍物
+        Vector3 pivotPos = transform.position;
+        Vector3 desiredWorldPos = transform.TransformPoint(cameraOffset);
+        Vector3 dir = desiredWorldPos - pivotPos;
+        float maxDist = dir.magnitude;
 
-        // 设置摄像机相对于目标的距离
-        Camera.main.transform.position = cameraPos;
-        Camera.main.transform.localPosition = new Vector3(1.5f, 0, -distance);
+        if (Physics.Raycast(pivotPos, dir.normalized, out RaycastHit hit, maxDist, collisionMask))
+        {
+            Vector3 safePos = hit.point + hit.normal * collisionOffset;
+            cam.position = Vector3.Lerp(cam.position, safePos, collisionSmoothSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cam.localPosition = Vector3.Lerp(cam.localPosition, cameraOffset, collisionSmoothSpeed * Time.deltaTime);
+        }
     }
 
     // =========================
@@ -123,28 +126,28 @@ public class ThirdPersonCamera : MonoBehaviour
         pitch -= mouseY;
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        // 水平旋转：角色旋转
-        transform.rotation = Quaternion.Euler(0, yaw, 0);
+        // 应用旋转：单一pivot同时控制yaw和pitch
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
 
-        // 垂直旋转：由自定义参照对象控制摄像机的上下旋转
-        customPitchReference.localRotation = Quaternion.Euler(pitch, 0, 0);
-
-        // 相机的位置平滑过渡
+        // 相机的位置平滑过渡（pivot跟随玩家）
         Vector3 targetPos = player.position + Vector3.up * height;
         transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
 
-        // 防止相机穿透角色
-        Vector3 cameraPos = cam.position;
-        RaycastHit hit;
-        Vector3 dir = (cameraPos - player.position).normalized;
-        if (Physics.Raycast(player.position, dir, out hit, distance))
-        {
-            cameraPos = hit.point;
-        }
+        // 防止相机穿透障碍物
+        Vector3 pivotPos = transform.position;
+        Vector3 desiredWorldPos = transform.TransformPoint(cameraOffset);
+        Vector3 dir = desiredWorldPos - pivotPos;
+        float maxDist = dir.magnitude;
 
-        // 设置摄像机相对于目标的距离
-        Camera.main.transform.position = cameraPos;
-        Camera.main.transform.localPosition = new Vector3(1.5f, 0, -distance);
+        if (Physics.Raycast(pivotPos, dir.normalized, out RaycastHit hit, maxDist, collisionMask))
+        {
+            Vector3 safePos = hit.point + hit.normal * collisionOffset;
+            cam.position = Vector3.Lerp(cam.position, safePos, collisionSmoothSpeed * Time.deltaTime);
+        }
+        else
+        {
+            cam.localPosition = Vector3.Lerp(cam.localPosition, cameraOffset, collisionSmoothSpeed * Time.deltaTime);
+        }
     }
 
     // 🟢 公开方法，供 ThirdPersonController 调用以更新索敌状态

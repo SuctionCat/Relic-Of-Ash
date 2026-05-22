@@ -27,11 +27,6 @@ public class UIManager
         if(instance==null)
         {
             instance = new UIManager();
-            Debug.Log("UIManager实例已创建");
-        }
-        else
-        {
-            Debug.Log("UIManager实例已存在");
         }
         return instance;
     }

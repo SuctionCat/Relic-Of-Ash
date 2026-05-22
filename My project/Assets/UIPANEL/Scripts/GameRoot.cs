@@ -66,6 +66,9 @@ public class GameRoot : MonoBehaviour
         {
             IsGamePaused = true;
             Time.timeScale = 0.0f;
+            // 解锁鼠标并使其可见，以便操作UI
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
     
@@ -79,6 +82,19 @@ public class GameRoot : MonoBehaviour
             protectPanelCount = 0;
             IsGamePaused = false;
             Time.timeScale = 1.0f;
+            // 根据当前场景决定是否锁定鼠标
+            // 在主菜单场景(Scene1)中，鼠标应该保持可见
+            // 在游戏场景(Scene2)中，鼠标应该被锁定
+            if(currentSceneName == "Scene2")
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            else if(currentSceneName == "Scene1")
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
     }
 
@@ -89,6 +105,19 @@ public class GameRoot : MonoBehaviour
         {
             if(currentSceneName == "Scene2")
             {
+                bool hasPausePanel = false;
+                foreach(var panel in UIManager_Root.stack_ui)
+                {
+                    if(panel.uiType.Name == "PausePanel")
+                    {
+                        hasPausePanel = true;
+                        break;
+                    }
+                }
+                if(hasPausePanel)
+                {
+                    return;
+                }
                 Debug.Log("检测到ESC键，打开暂停菜单");
                 UIManager_Root.Push(new PausePanel());
             }

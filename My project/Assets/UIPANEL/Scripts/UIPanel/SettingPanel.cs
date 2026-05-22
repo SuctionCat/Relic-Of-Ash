@@ -40,8 +40,22 @@ public SettingPanel():base(UIPanelType)
             sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
         }
         
-        // 进入保护模式
         GameRoot.GetInstance().EnterProtectMode();
+        GameRoot.GetInstance().RegisterUpdateMethod(HandleESCInput);
+    }
+
+    private void HandleESCInput()
+    {
+        if (UIManager.GetInstance().stack_ui.Count == 0 ||
+            UIManager.GetInstance().stack_ui.Peek() != this)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            BackButtonClick();
+        }
     }
     
     private void OnMusicVolumeChanged(float value)
@@ -70,9 +84,7 @@ public SettingPanel():base(UIPanelType)
     
     private void BackButtonClick()
     {
-        // 播放点击音效
         AudioManager.PlayClick();
-        GameRoot.GetInstance().ExitProtectMode();
         GameRoot.GetInstance().UIManager_Root.Pop(false);
     }
     
@@ -85,12 +97,14 @@ public SettingPanel():base(UIPanelType)
     public override void OnDisable()
     {
         Debug.Log("SettingPanel IS back");
+        GameRoot.GetInstance().UnregisterUpdateMethod(HandleESCInput);
         base.OnDisable();
         UIManager.GetInstance().RestorePreviousPanelInteractivity();
     }
     
     public override void OnDestroy()
     {
+        GameRoot.GetInstance().ExitProtectMode();
         base.OnDestroy();
     }
    

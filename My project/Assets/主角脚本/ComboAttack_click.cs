@@ -5,12 +5,14 @@ public class ComboByTime : MonoBehaviour
 {
     private Animator animator;
     private bool isComboActive = false;
+    private bool previousIsComboActive = false;
+    private int isComboActiveHash;
     private AnimatorStateInfo currentStateInfo;
     private AnimatorStateInfo previousStateInfo;
     void Start()
     {
         animator = GetComponent<Animator>();
-        // 初始化当前状态信息
+        isComboActiveHash = Animator.StringToHash("isComboActive");
         currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
         previousStateInfo = currentStateInfo;
     }
@@ -20,7 +22,6 @@ public class ComboByTime : MonoBehaviour
         if(GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused)
             return;
         
-        // 获取当前动画状态信息
         currentStateInfo = animator.GetCurrentAnimatorStateInfo(0);
 
         if (Input.GetMouseButtonDown(0))
@@ -32,7 +33,11 @@ public class ComboByTime : MonoBehaviour
             isComboActive = false;
             previousStateInfo = currentStateInfo;
         }
-        animator.SetBool("isComboActive", isComboActive);
+        if (isComboActive != previousIsComboActive)
+        {
+            animator.SetBool(isComboActiveHash, isComboActive);
+            previousIsComboActive = isComboActive;
+        }
     }
 }
 
