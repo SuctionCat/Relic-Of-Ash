@@ -28,8 +28,8 @@ public class PlayerStatsPanel : BasePanel
     private Button buttonQ;
     
     // 冷却时间文本（可选）
-    private Text cooldownTextE;
-    private Text cooldownTextQ;
+    private TextMeshProUGUI cooldownTextE;
+    private TextMeshProUGUI cooldownTextQ;
     
     // 武器切换相关
     private RectTransform weapon1Rect;
@@ -38,13 +38,6 @@ public class PlayerStatsPanel : BasePanel
     
     // 武器原始位置字典
     private Dictionary<string, Vector3> weaponOriginalPositions = new Dictionary<string, Vector3>();
-    
-    // 当前激活的武器索引（0=武器 1，1=武器 2，2=武器 3）
-    private int currentWeaponIndex = 0;
-    
-    // 武器切换冷却
-    private float weaponSwitchCooldown = 0.5f;
-    private float currentWeaponCooldown = 0f;
 
 public PlayerStatsPanel():base(UIPanelType)
 {
@@ -129,7 +122,15 @@ public PlayerStatsPanel():base(UIPanelType)
         }
         if(healthText1 != null)
         {
+            healthText1.text = Mathf.Ceil(currentHealth).ToString();
+        }
+        if(shieldText != null)
+        {
             shieldText.text = Mathf.Ceil(currentShield).ToString();
+        }
+        if(shieldText1 != null)
+        {
+            shieldText1.text = Mathf.Ceil(currentShield).ToString();
         }
     }
     
@@ -138,6 +139,9 @@ public PlayerStatsPanel():base(UIPanelType)
     {
         if(weapon1Rect == null || weapon2Rect == null || weapon3Rect == null)
             return;
+        
+        // 获取StateManager中的当前武器索引
+        int currentWeaponIndex = StateManager.instance != null ? StateManager.instance.GetWeaponIndex() : 0;
         
         // 从字典获取三个武器的原始位置作为三角形的三个顶点
         Vector3[] trianglePoints = new Vector3[3];
@@ -205,58 +209,16 @@ public PlayerStatsPanel():base(UIPanelType)
             weapon3Rect.SetAsLastSibling();
     }
     
-    // 检查伤害事件（用于测试）
-    private void CheckDamageEvents()
-    {
-        // 按H键受到伤害（测试用）
-        if(Input.GetKeyDown(KeyCode.H))
-        {
-            TakeDamage(20f);
-        }
-        
-        if(shieldText != null)
-        {
-            shieldText.text = Mathf.Ceil(currentShield).ToString();
-        }
-        if(shieldText1 != null)
-        {
-            shieldText1.text = Mathf.Ceil(currentShield).ToString();
-        }
-    }
-    
     private void Update()
     {
-        // 武器切换输入（鼠标滚轮）
-        if(currentWeaponCooldown <= 0)
-        {
-            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-            
-            if(scrollInput > 0f)
-            {
-                // 向上滚动：逆时针切换（0->2->1->0）
-                currentWeaponIndex = (currentWeaponIndex + 2) % 3;
-                currentWeaponCooldown = weaponSwitchCooldown;
-                UpdateWeaponDisplay();
-                Debug.Log($"武器切换到：{currentWeaponIndex + 1}");
-            }
-            else if(scrollInput < 0f)
-            {
-                // 向下滚动：顺时针切换（0->1->2->0）
-                currentWeaponIndex = (currentWeaponIndex + 1) % 3;
-                currentWeaponCooldown = weaponSwitchCooldown;
-                UpdateWeaponDisplay();
-                Debug.Log($"武器切换到：{currentWeaponIndex + 1}");
-            }
-        }
-        
-        // 检测键盘输入
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            OnButtonEClick();
-        }
-        
         // 更新血量UI
         UpdateHealthUI();
+        
+        // 更新冷却显示
+        UpdateCooldownDisplay();
+        
+        // 更新武器显示
+        UpdateWeaponDisplay();
     }
     
     private void UpdateCooldownDisplay()
@@ -294,18 +256,7 @@ public PlayerStatsPanel():base(UIPanelType)
                 cooldownTextQ.gameObject.SetActive(true);
             }
         }
-        
-        // 更新血量 UI
-        UpdateHealthUI();
-        
-        // 更新武器切换冷却
-        if(currentWeaponCooldown > 0)
-        {
-            currentWeaponCooldown -= Time.deltaTime;
-        }
-        
-        // 自动回复逻辑
-        if(Time.time - lastDamageTime >= regenDelay)
+        else
         {
             buttonQ.interactable = true;
             if(cooldownTextQ != null)
