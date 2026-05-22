@@ -28,8 +28,23 @@ public class PlayerStatsPanel : BasePanel
     private Button buttonQ;
     
     // 冷却时间文本（可选）
-    private TextMeshProUGUI cooldownTextE;
-    private TextMeshProUGUI cooldownTextQ;
+    private Text cooldownTextE;
+    private Text cooldownTextQ;
+    
+    // 武器切换相关
+    private RectTransform weapon1Rect;
+    private RectTransform weapon2Rect;
+    private RectTransform weapon3Rect;
+    
+    // 武器原始位置字典
+    private Dictionary<string, Vector3> weaponOriginalPositions = new Dictionary<string, Vector3>();
+    
+    // 当前激活的武器索引（0=武器 1，1=武器 2，2=武器 3）
+    private int currentWeaponIndex = 0;
+    
+    // 武器切换冷却
+    private float weaponSwitchCooldown = 0.5f;
+    private float currentWeaponCooldown = 0f;
 
 public PlayerStatsPanel():base(UIPanelType)
 {
@@ -67,7 +82,20 @@ public PlayerStatsPanel():base(UIPanelType)
             cooldownTextQ.gameObject.SetActive(false);
         }
         
-        // 注册Update方法到游戏循环
+        // 获取武器 UI 组件
+        weapon1Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 1");
+        weapon2Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 2");
+        weapon3Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 3");
+        
+        // 保存原始位置到字典
+        if(weapon1Rect != null) weaponOriginalPositions["weapon 1"] = weapon1Rect.localPosition;
+        if(weapon2Rect != null) weaponOriginalPositions["weapon 2"] = weapon2Rect.localPosition;
+        if(weapon3Rect != null) weaponOriginalPositions["weapon 3"] = weapon3Rect.localPosition;
+        
+        // 初始化武器显示
+        UpdateWeaponDisplay();
+        
+        // 注册 Update 方法到游戏循环
         GameRoot.GetInstance().RegisterUpdateMethod(Update);
     }
     
@@ -101,7 +129,89 @@ public PlayerStatsPanel():base(UIPanelType)
         }
         if(healthText1 != null)
         {
-            healthText1.text = Mathf.Ceil(currentHealth).ToString();
+            shieldText.text = Mathf.Ceil(currentShield).ToString();
+        }
+    }
+    
+    // 更新武器显示（三角形旋转切换）
+    private void UpdateWeaponDisplay()
+    {
+        if(weapon1Rect == null || weapon2Rect == null || weapon3Rect == null)
+            return;
+        
+        // 从字典获取三个武器的原始位置作为三角形的三个顶点
+        Vector3[] trianglePoints = new Vector3[3];
+        trianglePoints[0] = weaponOriginalPositions["weapon 1"];
+        trianglePoints[1] = weaponOriginalPositions["weapon 2"];
+        trianglePoints[2] = weaponOriginalPositions["weapon 3"];
+        
+        // 找出哪个位置Y坐标最大（最靠近屏幕顶部）
+        int topPositionIndex = 0;
+        float maxY = trianglePoints[0].y;
+        for(int i = 1; i < 3; i++)
+        {
+            if(trianglePoints[i].y > maxY)
+            {
+                maxY = trianglePoints[i].y;
+                topPositionIndex = i;
+            }
+        }
+        
+        // 旋转逻辑：根据当前选中的武器索引分配位置
+        int[] targetIndices = new int[3];
+        for(int i = 0; i < 3; i++)
+        {
+            targetIndices[i] = (i + currentWeaponIndex) % 3;
+        }
+        
+        // 先更新所有武器的位置和缩放
+        bool weapon1IsTop = false;
+        bool weapon2IsTop = false;
+        bool weapon3IsTop = false;
+        
+        // 更新武器 1：放在目标位置，只有在顶部位置时放大
+        if(weapon1Rect != null)
+        {
+            int targetPos = targetIndices[0];
+            weapon1Rect.localPosition = trianglePoints[targetPos];
+            weapon1Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon1IsTop = (targetPos == topPositionIndex);
+        }
+        
+        // 更新武器 2：放在目标位置，只有在顶部位置时放大
+        if(weapon2Rect != null)
+        {
+            int targetPos = targetIndices[1];
+            weapon2Rect.localPosition = trianglePoints[targetPos];
+            weapon2Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon2IsTop = (targetPos == topPositionIndex);
+        }
+        
+        // 更新武器 3：放在目标位置，只有在顶部位置时放大
+        if(weapon3Rect != null)
+        {
+            int targetPos = targetIndices[2];
+            weapon3Rect.localPosition = trianglePoints[targetPos];
+            weapon3Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon3IsTop = (targetPos == topPositionIndex);
+        }
+        
+        // 确保顶部武器显示在最上面
+        if(weapon1IsTop && weapon1Rect != null)
+            weapon1Rect.SetAsLastSibling();
+        else if(weapon2IsTop && weapon2Rect != null)
+            weapon2Rect.SetAsLastSibling();
+        else if(weapon3IsTop && weapon3Rect != null)
+            weapon3Rect.SetAsLastSibling();
+    }
+    
+    // 检查伤害事件（用于测试）
+    private void CheckDamageEvents()
+    {
+        // 按H键受到伤害（测试用）
+        if(Input.GetKeyDown(KeyCode.H))
+        {
+            TakeDamage(20f);
         }
         
         if(shieldText != null)
@@ -116,8 +226,34 @@ public PlayerStatsPanel():base(UIPanelType)
     
     private void Update()
     {
-        // 更新技能冷却显示
-        UpdateCooldownDisplay();
+        // 武器切换输入（鼠标滚轮）
+        if(currentWeaponCooldown <= 0)
+        {
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+            
+            if(scrollInput > 0f)
+            {
+                // 向上滚动：逆时针切换（0->2->1->0）
+                currentWeaponIndex = (currentWeaponIndex + 2) % 3;
+                currentWeaponCooldown = weaponSwitchCooldown;
+                UpdateWeaponDisplay();
+                Debug.Log($"武器切换到：{currentWeaponIndex + 1}");
+            }
+            else if(scrollInput < 0f)
+            {
+                // 向下滚动：顺时针切换（0->1->2->0）
+                currentWeaponIndex = (currentWeaponIndex + 1) % 3;
+                currentWeaponCooldown = weaponSwitchCooldown;
+                UpdateWeaponDisplay();
+                Debug.Log($"武器切换到：{currentWeaponIndex + 1}");
+            }
+        }
+        
+        // 检测键盘输入
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            OnButtonEClick();
+        }
         
         // 更新血量UI
         UpdateHealthUI();
@@ -158,7 +294,18 @@ public PlayerStatsPanel():base(UIPanelType)
                 cooldownTextQ.gameObject.SetActive(true);
             }
         }
-        else
+        
+        // 更新血量 UI
+        UpdateHealthUI();
+        
+        // 更新武器切换冷却
+        if(currentWeaponCooldown > 0)
+        {
+            currentWeaponCooldown -= Time.deltaTime;
+        }
+        
+        // 自动回复逻辑
+        if(Time.time - lastDamageTime >= regenDelay)
         {
             buttonQ.interactable = true;
             if(cooldownTextQ != null)
