@@ -236,18 +236,19 @@ public class BeAttack : MonoBehaviour
         {
             Health -= remainingDamage;
         }
+        if (Health <= 0)
+        {
+            animator.SetTrigger("Dead");
+            StateManager.instance?.NotifyPlayerDead();
+            Debug.Log("角色死亡！");
+            return;
+        }
         
         animator.SetTrigger("Behit_Down");
         Debug.Log("受到击倒攻击！");
         
         Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
 
-        if (Health <= 0)
-        {
-            animator.SetTrigger("Dead");
-            StateManager.instance?.NotifyPlayerDead();
-            Debug.Log("角色死亡！");
-        }
     }
     
     private void StopAttackEffects()
