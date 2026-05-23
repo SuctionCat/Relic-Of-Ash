@@ -21,13 +21,48 @@ public class Knife_Audio : MonoBehaviour
 
     private AudioSource audioSource;
     private Dictionary<string, AudioClip> soundDictionary = new Dictionary<string, AudioClip>();
+    private float originalVolume = 1f;
 
     void Awake()
     {
         audioSource = knifeAudioSource;
         BuildSoundDictionary();
+        
+        if (audioSource != null)
+        {
+            originalVolume = audioSource.volume;
+        }
     }
-
+    
+    void OnEnable()
+    {
+        AudioManager.OnSFXVolumeChanged += OnSFXVolumeChanged;
+        // 初始化时同步一次音量
+        if (AudioManager.instance != null)
+        {
+            float currentVolume = PlayerPrefs.GetFloat("SFXVolume", 100f) / 100f;
+            UpdateVolume(currentVolume);
+        }
+    }
+    
+    void OnDisable()
+    {
+        AudioManager.OnSFXVolumeChanged -= OnSFXVolumeChanged;
+    }
+    
+    private void OnSFXVolumeChanged(float volume)
+    {
+        UpdateVolume(volume);
+    }
+    
+    private void UpdateVolume(float sfxVolume)
+    {
+        if (audioSource != null)
+        {
+            audioSource.volume = originalVolume * sfxVolume;
+        }
+    }
+    
     void BuildSoundDictionary()
     {
         soundDictionary.Clear();

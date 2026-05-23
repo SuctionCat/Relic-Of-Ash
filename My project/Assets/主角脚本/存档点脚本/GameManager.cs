@@ -121,9 +121,7 @@ public class GameManager : MonoBehaviour
                 Animator animator = player.GetComponent<Animator>();
                 if (animator != null)
                 {
-                    animator.Rebind();
-                    animator.Update(0);
-                    animator.applyRootMotion = true;
+                    animator.SetTrigger("Respawn");
                 }
                 
                 WeaponController weaponController = player.GetComponent<WeaponController>();

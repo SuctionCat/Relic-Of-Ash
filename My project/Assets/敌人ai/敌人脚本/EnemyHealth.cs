@@ -8,6 +8,7 @@ public class EnemyHealth : MonoBehaviour
     private EnemyAI enemyAI;
     private CapsuleCollider capsuleCollider; // 1. 声明胶囊碰撞体变量
     private AudioSource audioSource; // 音频源组件
+    private float originalVolume = 1f; // 原始音量
 
     // [重要] 请在Inspector面板中拖入你的粒子特效预制体
     public GameObject hitEffectPrefab;
@@ -39,6 +40,36 @@ public class EnemyHealth : MonoBehaviour
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        originalVolume = audioSource.volume;
+    }
+    
+    void OnEnable()
+    {
+        AudioManager.OnSFXVolumeChanged += OnSFXVolumeChanged;
+        // 初始化时同步一次音量
+        if (AudioManager.instance != null)
+        {
+            float currentVolume = PlayerPrefs.GetFloat("SFXVolume", 100f) / 100f;
+            UpdateVolume(currentVolume);
+        }
+    }
+    
+    void OnDisable()
+    {
+        AudioManager.OnSFXVolumeChanged -= OnSFXVolumeChanged;
+    }
+    
+    private void OnSFXVolumeChanged(float volume)
+    {
+        UpdateVolume(volume);
+    }
+    
+    private void UpdateVolume(float sfxVolume)
+    {
+        if (audioSource != null)
+        {
+            audioSource.volume = originalVolume * sfxVolume;
         }
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Walk_Audio : MonoBehaviour
 {
+    private float originalVolume = 1f;
     [Header("动画列表")]
     [Tooltip("播放这些动画时使用跑步音效")]
     public List<AnimationClip> walkAnimations = new List<AnimationClip>();
@@ -34,6 +35,36 @@ public class Walk_Audio : MonoBehaviour
         if (_audioSource != null)
         {
             _audioSource.loop = true;
+            originalVolume = _audioSource.volume;
+        }
+    }
+    
+    void OnEnable()
+    {
+        AudioManager.OnSFXVolumeChanged += OnSFXVolumeChanged;
+        // 初始化时同步一次音量
+        if (AudioManager.instance != null)
+        {
+            float currentVolume = PlayerPrefs.GetFloat("SFXVolume", 100f) / 100f;
+            UpdateVolume(currentVolume);
+        }
+    }
+    
+    void OnDisable()
+    {
+        AudioManager.OnSFXVolumeChanged -= OnSFXVolumeChanged;
+    }
+    
+    private void OnSFXVolumeChanged(float volume)
+    {
+        UpdateVolume(volume);
+    }
+    
+    private void UpdateVolume(float sfxVolume)
+    {
+        if (_audioSource != null)
+        {
+            _audioSource.volume = originalVolume * sfxVolume;
         }
     }
 

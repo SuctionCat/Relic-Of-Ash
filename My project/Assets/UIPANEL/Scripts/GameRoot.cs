@@ -159,7 +159,6 @@ public class GameRoot : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(this.gameObject);
-        // Find Canvas object using UImchud
         GameObject canvas = UImchud.GetInstance().FindCanvas();
         if (canvas != null)
         {
@@ -171,9 +170,30 @@ public class GameRoot : MonoBehaviour
         }
         Scene1 scene1 = new Scene1();
         ScenesControl_Root.dict_scenes.Add(scene1.SceneName,scene1);
-    #region
-    UIManager_Root.Push(new InitialPanel());
+        #region
+        UIManager_Root.Push(new InitialPanel());
+        #endregion
+    }
 
-    #endregion
+    private void HandlePlayerDead()
+    {
+        Debug.Log("GameRoot: 处理玩家死亡，3秒后显示死亡面板");
+        StartCoroutine(ShowDeadPanelAfterDelay(3f));
+    }
+
+    private IEnumerator ShowDeadPanelAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        UIManager_Root.Push(new DeadPanel());
+    }
+
+    public void RegisterStateManager()
+    {
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.OnPlayerDead += HandlePlayerDead;
+            Debug.Log("GameRoot: StateManager 已注册，玩家死亡事件订阅成功");
+        }
     }
 }
+
