@@ -178,7 +178,7 @@ public PlayerStatsPanel():base(UIPanelType)
         {
             int targetPos = targetIndices[0];
             weapon1Rect.localPosition = trianglePoints[targetPos];
-            weapon1Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon1Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.2f : Vector3.one;
             weapon1IsTop = (targetPos == topPositionIndex);
         }
         
@@ -187,7 +187,7 @@ public PlayerStatsPanel():base(UIPanelType)
         {
             int targetPos = targetIndices[1];
             weapon2Rect.localPosition = trianglePoints[targetPos];
-            weapon2Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon2Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.2f : Vector3.one;
             weapon2IsTop = (targetPos == topPositionIndex);
         }
         
@@ -196,7 +196,7 @@ public PlayerStatsPanel():base(UIPanelType)
         {
             int targetPos = targetIndices[2];
             weapon3Rect.localPosition = trianglePoints[targetPos];
-            weapon3Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.1f : Vector3.one;
+            weapon3Rect.localScale = (targetPos == topPositionIndex) ? Vector3.one * 1.2f : Vector3.one;
             weapon3IsTop = (targetPos == topPositionIndex);
         }
         
