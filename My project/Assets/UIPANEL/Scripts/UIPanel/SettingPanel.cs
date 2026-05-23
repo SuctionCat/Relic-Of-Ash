@@ -76,9 +76,8 @@ public SettingPanel():base(UIPanelType)
         PlayerPrefs.SetFloat("SFXVolume", value);
         PlayerPrefs.Save();
         
-        // 应用音效音量
-        // 这里需要根据你的音频管理系统来设置音量
-        // 例如：AudioManager.Instance.SetSFXVolume(value);
+        // 应用音效音量到AudioManager
+        AudioManager.SetSFXVolumeStatic(value);
         Debug.Log($"音效音量设置为: {value}");
     }
     

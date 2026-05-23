@@ -142,6 +142,7 @@ public class BeAttack : MonoBehaviour
         {
             isDead = true;
             animator.SetTrigger("Dead");
+            StateManager.instance?.NotifyPlayerDead();
         }
     }
     
@@ -240,10 +241,11 @@ public class BeAttack : MonoBehaviour
         Debug.Log("受到击倒攻击！");
         
         Debug.Log($"当前生命值: {Health}，当前护盾值: {Shield}");
-        
+
         if (Health <= 0)
         {
             animator.SetTrigger("Dead");
+            StateManager.instance?.NotifyPlayerDead();
             Debug.Log("角色死亡！");
         }
     }
@@ -293,19 +295,7 @@ public class BeAttack : MonoBehaviour
         animator.SetLayerWeight(behitLayerIndex, targetWeight);
         isTransitioning = false;
     }
-    
-    public void OnDeathAnimationEnd()
-    {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.PlayerRespawn();
-            Debug.Log("动画事件触发：调用玩家重生");
-        }
-        else
-        {
-            Debug.LogWarning("GameManager.Instance 为空，无法触发重生");
-        }
-    }
+
     
     public void ResetDeadState()
     {

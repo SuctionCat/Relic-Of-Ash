@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 public class LoadingPanel : BasePanel
 {
@@ -10,16 +8,9 @@ public class LoadingPanel : BasePanel
     private static string Path = "Panel/LoadingPanel";
     public static readonly UITepy UIPanelType = new UITepy(Path, Name);
     
-    private Slider progressSlider;
-    private Image fillImage;
-    private TextMeshProUGUI progressText;
-    private TextMeshProUGUI tipText;
-    
-    private float targetProgress = 0f;
-    private float currentProgress = 0f;
-    private float smoothSpeed = 10f;
-    
-    private bool isLoading = false;
+    private List<Animator> allAnimators = new List<Animator>();
+    private bool isAllAnimationsFinished = false;
+    public bool IsAllAnimationsFinished { get => isAllAnimationsFinished; }
     
     public LoadingPanel() : base(UIPanelType) { }
     
@@ -27,88 +18,48 @@ public class LoadingPanel : BasePanel
     {
         base.ONStart();
         
-        progressSlider = UImchud.GetInstance().GetOrAddComponent<Slider>(ActiveObj, "ProgressSlider");
-        tipText = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "TipText");
-        
-        Transform fillRect = ActiveObj.transform.Find("ProgressSlider/Fill Area/Fill");
-        if(fillRect != null)
+        Animator[] animators = ActiveObj.GetComponentsInChildren<Animator>(true);
+        if(animators != null && animators.Length > 0)
         {
-            fillImage = fillRect.GetComponent<Image>();
-        }
-        
-        Transform progressTextTransform = ActiveObj.transform.Find("ProgressSlider/ProgressText");
-        if(progressTextTransform != null)
-        {
-            progressText = progressTextTransform.GetComponent<TextMeshProUGUI>();
-        }
-        
-        if(progressSlider != null)
-        {
-            progressSlider.value = 0f;
-            Debug.Log("LoadingPanel: ProgressSlider found and initialized");
+            allAnimators.AddRange(animators);
+            Debug.Log($"LoadingPanel: Found {allAnimators.Count} animator(s)");
         }
         else
         {
-            Debug.LogError("LoadingPanel: ProgressSlider not found!");
+            Debug.LogWarning("LoadingPanel: No animators found");
         }
         
-        if(tipText != null)
-        {
-            Debug.Log("LoadingPanel: TipText found");
-        }
-        else
-        {
-            Debug.LogError("LoadingPanel: TipText not found!");
-        }
-        
-        GameRoot.GetInstance().RegisterUpdateMethod(UpdateProgress);
-        Debug.Log("LoadingPanel: UpdateProgress registered");
+        isAllAnimationsFinished = false;
+        Debug.Log("LoadingPanel: Initialized");
     }
     
-    private void UpdateProgress()
+    public void CheckAllAnimationsFinished()
     {
-        if(!isLoading) return;
-        if(ActiveObj == null) return;
-        
-        currentProgress = Mathf.MoveTowards(currentProgress, targetProgress, Time.deltaTime * smoothSpeed);
-        
-        if(progressSlider != null)
+        if(allAnimators.Count == 0)
         {
-            progressSlider.value = currentProgress;
-            Debug.Log($"LoadingPanel: Progress updated to {Mathf.RoundToInt(currentProgress * 100)}% (target: {Mathf.RoundToInt(targetProgress * 100)}%)");
+            isAllAnimationsFinished = true;
+            Debug.Log("LoadingPanel: No animators, skipping animation wait");
+            return;
         }
         
-        if(progressText != null)
+        foreach(Animator animator in allAnimators)
         {
-            progressText.text = Mathf.RoundToInt(currentProgress * 100) + "%";
+            if(animator != null && animator.enabled && animator.gameObject.activeInHierarchy)
+            {
+                AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+                if(stateInfo.loop || stateInfo.normalizedTime < 1f)
+                {
+                    return;
+                }
+            }
         }
-    }
-    
-    public void SetProgress(float progress, string tip = "")
-    {
-        targetProgress = Mathf.Clamp01(progress);
         
-        if(tipText != null && !string.IsNullOrEmpty(tip))
-        {
-            tipText.text = tip;
-        }
-    }
-    
-    public void StartLoading()
-    {
-        isLoading = true;
-        currentProgress = 0f;
-        targetProgress = 0f;
-    }
-    
-    public void StopLoading()
-    {
-        isLoading = false;
+        isAllAnimationsFinished = true;
+        Debug.Log("LoadingPanel: All animations finished");
     }
     
     public override void OnDestroy()
     {
         base.OnDestroy();
-        GameRoot.GetInstance().UnregisterUpdateMethod(UpdateProgress);
     }
 }

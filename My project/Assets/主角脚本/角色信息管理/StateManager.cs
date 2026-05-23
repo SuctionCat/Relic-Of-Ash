@@ -23,6 +23,9 @@ public class StateManager : MonoBehaviour
     public delegate void WeaponIndexChanged(int newIndex);
     public event WeaponIndexChanged OnWeaponIndexChanged;
 
+    public delegate void PlayerDeadHandler();
+    public event PlayerDeadHandler OnPlayerDead;
+
     private Dictionary<int, string> weaponNames = new Dictionary<int, string>
     {
         { 0, "Sword" },
@@ -48,6 +51,11 @@ public class StateManager : MonoBehaviour
         InitializeFromPlayerMemento();
         qCooldownRemaining = 0f;
         eCooldownRemaining = 0f;
+
+        if (GameRoot.GetInstance() != null)
+        {
+            GameRoot.GetInstance().RegisterStateManager();
+        }
     }
     
     void Update()
@@ -170,5 +178,11 @@ public class StateManager : MonoBehaviour
     public float GetECooldownRemaining()
     {
         return eCooldownRemaining;
+    }
+
+    public void NotifyPlayerDead()
+    {
+        Debug.Log("StateManager: 收到玩家死亡通知");
+        OnPlayerDead?.Invoke();
     }
 }

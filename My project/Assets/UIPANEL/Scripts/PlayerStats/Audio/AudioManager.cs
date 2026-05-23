@@ -11,6 +11,11 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     public static AudioManager instance;
     private AudioSource clickSource;
+    
+    /// <summary>
+    /// 音效音量变化事件，供其他脚本订阅
+    /// </summary>
+    public static event System.Action<float> OnSFXVolumeChanged;
     private void Awake()
     {
         if(instance == null)
@@ -30,7 +35,6 @@ public class AudioManager : MonoBehaviour
         clickSource = gameObject.AddComponent<AudioSource>();
     }
     private void Start()
-
     {
        foreach(AudioType audioType in AudioTypes)
        {
@@ -44,6 +48,10 @@ public class AudioManager : MonoBehaviour
                audioType.source.outputAudioMixerGroup = audioType.mixerGroup;
            }
        }
+       
+       // 初始化时应用保存的音效音量
+       float savedSFXVolume = PlayerPrefs.GetFloat("SFXVolume", 100f);
+       SetSFXVolume(savedSFXVolume);
     }
     public void Play(string name)
     {
@@ -116,6 +124,37 @@ public class AudioManager : MonoBehaviour
         else
         {
             Debug.LogError("AudioManager实例不存在");
+        }
+    }
+    
+    // 设置音效音量（用于UI音效、点击音效等）
+    public void SetSFXVolume(float volume)
+    {
+        float normalizedVolume = volume / 100f;
+        if(clickSource != null)
+        {
+            clickSource.volume = normalizedVolume;
+        }
+        // 也可以设置其他音效类型的音量
+        foreach(AudioType audioType in AudioTypes)
+        {
+            // 可以根据名称或其他条件来区分音效类型
+            if(audioType.name.Contains("SFX") || audioType.name.Contains("Click"))
+            {
+                audioType.source.volume = normalizedVolume * audioType.volume;
+            }
+        }
+        
+        // 触发音效音量变化事件
+        OnSFXVolumeChanged?.Invoke(normalizedVolume);
+    }
+    
+    // 静态方法，设置音效音量
+    public static void SetSFXVolumeStatic(float volume)
+    {
+        if(instance != null)
+        {
+            instance.SetSFXVolume(volume);
         }
     }
 }

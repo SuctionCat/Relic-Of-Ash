@@ -392,9 +392,9 @@ MonoBehaviour:
   AudioTypes:
   - source: {fileID: 0}
     mixerGroup: {fileID: 0}
-    clip: {fileID: 8300000, guid: 8e35dd20fe5cc6247bf11d80cb08d9e7, type: 3}
+    clip: {fileID: 0}
     pitch: 0.1
-    name: 
+    name: "\u80CC\u666F\u97F3\u4E50"
     volume: 0
     loop: 0
 --- !u!4 &828934343

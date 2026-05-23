@@ -82,8 +82,11 @@ public class ScenesControl
         {
             loadingPanel = new LoadingPanel();
             GameRoot.GetInstance().UIManager_Root.Push(loadingPanel);
-            loadingPanel.StartLoading();
-            loadingPanel.SetProgress(0f, "正在加载游戏资源...");
+            Debug.Log("ScenesControl: Loading panel shown");
+            
+            yield return new WaitForSeconds(1.0f);
+            
+            Debug.Log("ScenesControl: UI fully rendered");
         }
         
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scene_name);
@@ -91,40 +94,24 @@ public class ScenesControl
         
         while(!asyncOperation.isDone)
         {
-            float progress = 0f;
-            
-            if(asyncOperation.progress < 0.9f)
-            {
-                progress = asyncOperation.progress;
-            }
-            else
-            {
-                progress = Mathf.Lerp(0.9f, 1f, (asyncOperation.progress - 0.9f) * 10f);
-            }
-            
-            Debug.Log($"ScenesControl: Scene loading progress: {asyncOperation.progress}, displayed: {progress}");
-            
-            if(loadingPanel != null && loadingPanel.ActiveObj != null)
-            {
-                loadingPanel.SetProgress(progress, GetLoadingTip(progress));
-            }
+            Debug.Log($"ScenesControl: Scene loading progress: {asyncOperation.progress}");
             
             if(asyncOperation.progress >= 0.9f)
             {
-                yield return new WaitForSeconds(0.5f);
                 break;
             }
             
             yield return null;
         }
         
-        if(loadingPanel != null)
-        {
-            loadingPanel.SetProgress(1f, "加载完成！");
-            loadingPanel.StopLoading();
-        }
+        Debug.Log("ScenesControl: Scene loading completed, waiting for all animations");
         
-        yield return new WaitForSeconds(0.2f);
+        while(loadingPanel != null && !loadingPanel.IsAllAnimationsFinished)
+        {
+            loadingPanel.CheckAllAnimationsFinished();
+            yield return null;
+        }
+        Debug.Log("ScenesControl: All animations finished, proceeding to activate scene");
         
         if(loadingPanel != null)
         {
