@@ -103,11 +103,38 @@ public class EnemyAI_Boss : EnemyAI
             originalWeaponRadius = weaponCollider.radius;
         }
     }
+    
+    // 重写玩家死亡处理方法，处理Boss特有的状态
+    protected override void OnPlayerDead()
+    {
+        base.OnPlayerDead();
+        
+        // 重置Boss特有的状态
+        isPerformingSpecialAttack = false;
+        isTurningToPlayer = false;
+        isPostAttackStanding = false;
+        
+        // 关闭所有Boss特有的动画
+        animator.SetBool("Roll", false);
+        animator.SetBool("LongStab", false);
+        animator.SetBool("Stand", false);
+        
+        // 恢复武器胶囊体原始长度和半径
+        if (weaponCollider != null)
+        {
+            weaponCollider.height = originalWeaponLength;
+            weaponCollider.radius = originalWeaponRadius;
+        }
+        
+        // 重置追击计时器和行为状态
+        chaseTimer = 0f;
+        behaviorTimer = 0f;
+    }
 
     // 改写 Update 方法
     protected override void Update()
     {
-        if (playerTransform == null) return;// 如果主角不存在，直接返回
+        if (playerTransform == null || isPlayerDead) return;// 如果主角不存在或已死亡，直接返回
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);// 计算敌人到主角的距离
 

@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour
     protected Animator animator;
     protected Transform playerTransform;
     protected bool isCurrentlyAttacking = false;// 是否正在攻击，防止攻击时移动
+    protected bool isPlayerDead = false; // 玩家是否死亡
 
     // --- 配置参数 (可在Inspector面板调整) ---
     public float detectionRange = 10f; // 发现玩家的距离范围
@@ -34,11 +35,47 @@ public class EnemyAI : MonoBehaviour
 
         // 4. 设置导航代理速度
         agent.speed = moveSpeed;
+        
+        // 5. 注册玩家死亡和复活事件监听
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.OnPlayerDead += OnPlayerDead;
+            StateManager.instance.OnPlayerRevived += OnPlayerRevived;
+        }
+    }
+    
+    protected virtual void OnDestroy()
+    {
+        // 取消注册事件，防止内存泄漏
+        if (StateManager.instance != null)
+        {
+            StateManager.instance.OnPlayerDead -= OnPlayerDead;
+            StateManager.instance.OnPlayerRevived -= OnPlayerRevived;
+        }
+    }
+    
+    protected virtual void OnPlayerDead()
+    {
+        isPlayerDead = true;
+        Debug.Log("EnemyAI: 玩家已死亡，停止攻击");
+        
+        // 停止移动和攻击
+        agent.isStopped = true;
+        agent.ResetPath();
+        animator.SetBool("canAttack", false);
+        animator.SetBool("Find_Player", false);
+        isCurrentlyAttacking = false;
+    }
+    
+    protected virtual void OnPlayerRevived()
+    {
+        isPlayerDead = false;
+        Debug.Log("EnemyAI: 玩家已复活，恢复攻击能力");
     }
 
     protected virtual void Update()
     {
-        if (playerTransform == null) return;// 如果主角不存在，直接返回
+        if (playerTransform == null || isPlayerDead) return;// 如果主角不存在或已死亡，直接返回
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);// 计算敌人到主角的距离
 

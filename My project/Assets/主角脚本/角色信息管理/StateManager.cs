@@ -26,6 +26,9 @@ public class StateManager : MonoBehaviour
     public delegate void PlayerDeadHandler();
     public event PlayerDeadHandler OnPlayerDead;
 
+    public delegate void PlayerRevivedHandler();
+    public event PlayerRevivedHandler OnPlayerRevived;
+
     private Dictionary<int, string> weaponNames = new Dictionary<int, string>
     {
         { 0, "Sword" },
@@ -98,8 +101,21 @@ public class StateManager : MonoBehaviour
 
     public void SetHealth(float health)
     {
+        bool wasDead = currentHealth <= 0f;
         currentHealth = health;
         Debug.Log($"StateManager: 生命值已更新为 {currentHealth}");
+        
+        // 如果玩家之前死亡且现在生命值大于0，则触发复活事件
+        if (wasDead && currentHealth > 0f)
+        {
+            NotifyPlayerRevived();
+        }
+    }
+    
+    public void NotifyPlayerRevived()
+    {
+        Debug.Log("StateManager: 玩家已复活");
+        OnPlayerRevived?.Invoke();
     }
 
     public void SetShield(float shield)
