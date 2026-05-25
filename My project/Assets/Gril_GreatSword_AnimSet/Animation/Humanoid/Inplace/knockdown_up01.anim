@@ -43026,16 +43026,16 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0
-    functionName: StopAllEffects
-    data: 
+  - time: 0.033333335
+    functionName: PlaySwingSound
+    data: BeHitDown
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.033333335
-    functionName: PlaySwingSound
-    data: BeHitDown
+  - time: 0.33333334
+    functionName: StopAllEffects
+    data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
