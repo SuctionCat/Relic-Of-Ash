@@ -10,7 +10,7 @@ Material:
   m_Name: Sci_Fi_Sword
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 2100000, guid: 2f75bd07553acd44fb31861faa5702d2, type: 2}
-  m_ModifiedSerializedProperties: 0
+  m_ModifiedSerializedProperties: 2
   m_ValidKeywords:
   - _EMISSION
   - _METALLICSPECGLOSSMAP
@@ -18,7 +18,7 @@ Material:
   - _OCCLUSIONMAP
   m_InvalidKeywords:
   - _METALLICGLOSSMAP
-  m_LightmapFlags: 4
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -54,7 +54,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _OcclusionStrength: 1
+    - _ReceiveShadows: 1
     m_Colors: []
   m_BuildTextureStacks: []
 --- !u!114 &424250831076534215
