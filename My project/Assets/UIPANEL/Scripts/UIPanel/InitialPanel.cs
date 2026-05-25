@@ -13,9 +13,6 @@ public class InitialPanel : BasePanel
     private Text textComponent;
     private TMP_Text tmpTextComponent;
     private Image backgroundImage;
-    private float glowSpeed = 1.5f;
-    private float minAlpha = 0.3f;
-    private float maxAlpha = 1.0f;
     private bool hasPressedAnyKey = false;
     private float backgroundPulseSpeed = 1.0f;
     private float backgroundScaleMin = 1f;
@@ -94,28 +91,8 @@ public class InitialPanel : BasePanel
 
     private void UpdateMethod()
     {
-        UpdateGlowEffect();
         UpdateBackGroundEffect();
         CheckForAnyKey();
-    }
-
-    private void UpdateGlowEffect()
-    {
-        float alpha = Mathf.Lerp(minAlpha, maxAlpha, (Mathf.Sin(Time.time * glowSpeed) + 1) / 2);
-        
-        if (textComponent != null)
-        {
-            Color color = textComponent.color;
-            color.a = alpha;
-            textComponent.color = color;
-        }
-        else if (tmpTextComponent != null)
-        {
-            Color color = tmpTextComponent.color;
-            color.a = alpha;
-            tmpTextComponent.color = color;
-        }
-        
     }
 
     private void UpdateBackGroundEffect()
@@ -128,8 +105,8 @@ public class InitialPanel : BasePanel
         // 应用缩放
         backgroundImage.transform.localScale = new Vector3(scale, scale, 1f);
         
-        // 计算透明度变化
-        float alpha = Mathf.Lerp(0.7f, 1.0f, (Mathf.Sin(Time.time * backgroundPulseSpeed * 0.8f) + 1) / 2);
+        // 计算透明度变化 (80% - 100%)
+        float alpha = Mathf.Lerp(0.8f, 1.0f, (Mathf.Sin(Time.time * backgroundPulseSpeed * 0.8f) + 1) / 2);
         
         // 应用透明度
         Color color = backgroundImage.color;
