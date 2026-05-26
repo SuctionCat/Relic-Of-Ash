@@ -11,6 +11,7 @@ public class ThirdPersonCamera : MonoBehaviour
     public float mouseSensitivity = 200f;
     public float height = 1.5f;
     public float smoothSpeed = 10f;
+    public float positionDeadZone = 0.1f;   // 位置死区，容忍微小抖动的范围（米）
 
     [Header("Clamp")]
     public float minPitch = -30f;
@@ -32,6 +33,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
     private float yaw;
     private float pitch = 20f;
+    private Vector3 _lastValidPosition;   // 缓存上一次确认跟随的玩家位置
 
     void Start()
     {
@@ -40,6 +42,10 @@ public class ThirdPersonCamera : MonoBehaviour
 
         // 初始化角度
         yaw = transform.eulerAngles.y;
+
+        // 初始化缓存位置
+        if (player != null)
+            _lastValidPosition = player.position;
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -91,8 +97,16 @@ public class ThirdPersonCamera : MonoBehaviour
         // 应用旋转：单一pivot同时控制yaw和pitch
         transform.rotation = Quaternion.Euler(pitch, yaw, 0);
 
-        // 相机的位置平滑过渡（pivot跟随玩家）
-        Vector3 targetPos = player.position + Vector3.up * height;
+        // 相机的位置平滑过渡（pivot跟随玩家），带死区处理
+        Vector3 currentPlayerPos = player.position;
+        float distanceToLastValid = Vector3.Distance(currentPlayerPos, _lastValidPosition);
+
+        if (distanceToLastValid > positionDeadZone)
+        {
+            _lastValidPosition = currentPlayerPos;
+        }
+
+        Vector3 targetPos = _lastValidPosition + Vector3.up * height;
         transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
 
         // 防止相机穿透障碍物
@@ -129,8 +143,16 @@ public class ThirdPersonCamera : MonoBehaviour
         // 应用旋转：单一pivot同时控制yaw和pitch
         transform.rotation = Quaternion.Euler(pitch, yaw, 0);
 
-        // 相机的位置平滑过渡（pivot跟随玩家）
-        Vector3 targetPos = player.position + Vector3.up * height;
+        // 相机的位置平滑过渡（pivot跟随玩家），带死区处理
+        Vector3 currentPlayerPos = player.position;
+        float distanceToLastValid = Vector3.Distance(currentPlayerPos, _lastValidPosition);
+
+        if (distanceToLastValid > positionDeadZone)
+        {
+            _lastValidPosition = currentPlayerPos;
+        }
+
+        Vector3 targetPos = _lastValidPosition + Vector3.up * height;
         transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
 
         // 防止相机穿透障碍物
