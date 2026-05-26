@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public float footOffset = 0.5f;  // 从角色中心到脚部的垂直偏移距离（向下为正）
 
     public Vector3 boxSize = new Vector3(0.4f, 0f, 0.4f);  // BoxCast的大小，表示要检测的区域
+    public float sideRayHeight = 0.2f;  // 侧边射线向上偏移的高度，适配胶囊体形状
 
     void Start()
     {
@@ -42,16 +43,17 @@ public class PlayerController : MonoBehaviour
         // 定义射线发射点（3x3正方形排列，共9个检测点）
         float halfWidth = checkWidth * 0.4f;
         float halfDepth = checkWidth * 0.4f; // 使用脚宽作为深度
+        Vector3 sideOffset = Vector3.up * sideRayHeight; // 侧边射线向上偏移，适配胶囊体形状
         Vector3[] rayOrigins = new Vector3[] {
-            footPosition + Vector3.left * halfWidth + Vector3.forward * halfDepth,  // 左前
-            footPosition + Vector3.left * halfWidth,                                  // 左中
-            footPosition + Vector3.left * halfWidth + Vector3.back * halfDepth,       // 左后
-            footPosition + Vector3.forward * halfDepth,                               // 前中
-            footPosition,                                                             // 中心
-            footPosition + Vector3.back * halfDepth,                                  // 后中
-            footPosition + Vector3.right * halfWidth + Vector3.forward * halfDepth,   // 右前
-            footPosition + Vector3.right * halfWidth,                                 // 右中
-            footPosition + Vector3.right * halfWidth + Vector3.back * halfDepth       // 右后
+            footPosition + Vector3.left * halfWidth + Vector3.forward * halfDepth + sideOffset,  // 左前
+            footPosition + Vector3.left * halfWidth + sideOffset,                                  // 左中
+            footPosition + Vector3.left * halfWidth + Vector3.back * halfDepth + sideOffset,       // 左后
+            footPosition + Vector3.forward * halfDepth + sideOffset,                               // 前中
+            footPosition,                                                             // 中心（不偏移）
+            footPosition + Vector3.back * halfDepth + sideOffset,                                  // 后中
+            footPosition + Vector3.right * halfWidth + Vector3.forward * halfDepth + sideOffset,   // 右前
+            footPosition + Vector3.right * halfWidth + sideOffset,                                 // 右中
+            footPosition + Vector3.right * halfWidth + Vector3.back * halfDepth + sideOffset       // 右后
         };
         
         foreach (Vector3 origin in rayOrigins)
@@ -79,16 +81,17 @@ public class PlayerController : MonoBehaviour
         // 定义射线发射点（3x3正方形排列）
         float halfWidth = checkWidth * 0.4f;
         float halfDepth = checkWidth * 0.4f;
+        Vector3 sideOffset = Vector3.up * sideRayHeight;
         Vector3[] rayOrigins = new Vector3[] {
-            footPosition + Vector3.left * halfWidth + Vector3.forward * halfDepth,
-            footPosition + Vector3.left * halfWidth,
-            footPosition + Vector3.left * halfWidth + Vector3.back * halfDepth,
-            footPosition + Vector3.forward * halfDepth,
+            footPosition + Vector3.left * halfWidth + Vector3.forward * halfDepth + sideOffset,
+            footPosition + Vector3.left * halfWidth + sideOffset,
+            footPosition + Vector3.left * halfWidth + Vector3.back * halfDepth + sideOffset,
+            footPosition + Vector3.forward * halfDepth + sideOffset,
             footPosition,
-            footPosition + Vector3.back * halfDepth,
-            footPosition + Vector3.right * halfWidth + Vector3.forward * halfDepth,
-            footPosition + Vector3.right * halfWidth,
-            footPosition + Vector3.right * halfWidth + Vector3.back * halfDepth
+            footPosition + Vector3.back * halfDepth + sideOffset,
+            footPosition + Vector3.right * halfWidth + Vector3.forward * halfDepth + sideOffset,
+            footPosition + Vector3.right * halfWidth + sideOffset,
+            footPosition + Vector3.right * halfWidth + Vector3.back * halfDepth + sideOffset
         };
         
         // 绘制射线起点（绿色球）
