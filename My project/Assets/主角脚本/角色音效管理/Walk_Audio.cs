@@ -26,6 +26,7 @@ public class Walk_Audio : MonoBehaviour
     private Animator _animator;
     private AudioSource _audioSource;
     private AnimationClip _currentAnimationClip;
+    private bool _wasPaused = false;
 
     void Awake()
     {
@@ -70,6 +71,27 @@ public class Walk_Audio : MonoBehaviour
 
     void Update()
     {
+        bool isPaused = GameRoot.GetInstance() != null && GameRoot.GetInstance().IsGamePaused;
+
+        if (isPaused)
+        {
+            if (_audioSource != null && _audioSource.isPlaying)
+            {
+                _audioSource.Pause();
+            }
+            _wasPaused = true;
+            return;
+        }
+
+        if (_wasPaused)
+        {
+            _wasPaused = false;
+            if (_audioSource != null && !_audioSource.isPlaying && _audioSource.clip != null)
+            {
+                _audioSource.UnPause();
+            }
+        }
+
         CheckCurrentAnimation();
     }
 
