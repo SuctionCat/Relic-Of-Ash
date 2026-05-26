@@ -64,9 +64,8 @@ public SettingPanel():base(UIPanelType)
         PlayerPrefs.SetFloat("MusicVolume", value);
         PlayerPrefs.Save();
         
-        // 应用音乐音量
-        // 这里需要根据你的音频管理系统来设置音量
-        // 例如：AudioManager.Instance.SetMusicVolume(value);
+        // 应用音乐音量到AudioManager
+        AudioManager.SetMusicVolumeStatic(value);
         Debug.Log($"音乐音量设置为: {value}");
     }
     

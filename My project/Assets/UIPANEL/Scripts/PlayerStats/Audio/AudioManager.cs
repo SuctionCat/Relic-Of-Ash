@@ -16,6 +16,11 @@ public class AudioManager : MonoBehaviour
     /// 音效音量变化事件，供其他脚本订阅
     /// </summary>
     public static event System.Action<float> OnSFXVolumeChanged;
+    
+    /// <summary>
+    /// 音乐音量变化事件，供其他脚本订阅
+    /// </summary>
+    public static event System.Action<float> OnMusicVolumeChanged;
     private void Awake()
     {
         if(instance == null)
@@ -52,6 +57,10 @@ public class AudioManager : MonoBehaviour
        // 初始化时应用保存的音效音量
        float savedSFXVolume = PlayerPrefs.GetFloat("SFXVolume", 100f);
        SetSFXVolume(savedSFXVolume);
+       
+       // 初始化时应用保存的音乐音量
+       float savedMusicVolume = PlayerPrefs.GetFloat("MusicVolume", 100f);
+       SetMusicVolume(savedMusicVolume);
     }
     public void Play(string name)
     {
@@ -156,5 +165,97 @@ public class AudioManager : MonoBehaviour
         {
             instance.SetSFXVolume(volume);
         }
+    }
+    
+    // 设置音乐音量（控制所有AudioType的音频和场景中的Main BGM）
+    public void SetMusicVolume(float volume)
+    {
+        float normalizedVolume = volume / 100f;
+        Debug.Log($"[AudioManager] SetMusicVolume called with volume={volume}, normalized={normalizedVolume}");
+        
+        // 控制AudioTypes中的音频
+        if(AudioTypes != null)
+        {
+            Debug.Log($"[AudioManager] AudioTypes has {AudioTypes.Length} elements");
+            foreach(AudioType audioType in AudioTypes)
+            {
+                audioType.source.volume = normalizedVolume;
+                Debug.Log($"[AudioManager] Set AudioType {audioType.name} volume to {normalizedVolume}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[AudioManager] AudioTypes is null");
+        }
+        
+        // 控制场景中的BGM对象（支持多个场景）
+        SetVolumeForBgmObject("Main BGM", normalizedVolume); // 场景1的BGM
+        SetVolumeForBgmObject("BGM", normalizedVolume); // 场景2的BGM
+        
+        OnMusicVolumeChanged?.Invoke(normalizedVolume);
+    }
+    
+    // 设置指定名称的BGM对象音量
+    private void SetVolumeForBgmObject(string objectName, float volume)
+    {
+        GameObject bgmObject = GameObject.Find(objectName);
+        if(bgmObject != null)
+        {
+            AudioSource bgmSource = bgmObject.GetComponent<AudioSource>();
+            if(bgmSource != null)
+            {
+                bgmSource.volume = volume;
+                Debug.Log($"[AudioManager] Set {objectName} volume to {volume}");
+            }
+        }
+    }
+    
+    // 应用保存的音量到当前场景中的所有BGM对象
+    public void ApplySavedMusicVolume()
+    {
+        float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 100f);
+        SetMusicVolume(savedVolume);
+    }
+    
+    // 静态方法，应用保存的音量
+    public static void ApplySavedMusicVolumeStatic()
+    {
+        if(instance != null)
+        {
+            instance.ApplySavedMusicVolume();
+        }
+    }
+    
+    // 静态方法，设置音乐音量
+    public static void SetMusicVolumeStatic(float volume)
+    {
+        Debug.Log($"[AudioManager] SetMusicVolumeStatic called with volume={volume}, instance={instance}");
+        if(instance != null)
+        {
+            instance.SetMusicVolume(volume);
+        }
+        else
+        {
+            Debug.LogError("[AudioManager] instance is null in SetMusicVolumeStatic");
+        }
+    }
+    
+    private void OnEnable()
+    {
+        // 监听场景加载完成事件
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    
+    private void OnDisable()
+    {
+        // 取消监听场景加载完成事件
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    // 场景加载完成时调用
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        Debug.Log($"[AudioManager] Scene loaded: {scene.name}, applying saved music volume");
+        ApplySavedMusicVolume();
     }
 }
