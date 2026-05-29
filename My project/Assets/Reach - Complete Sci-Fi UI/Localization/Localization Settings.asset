@@ -24,19 +24,25 @@ MonoBehaviour:
     localizedName: Deutsch
     localizationLanguage: {fileID: 11400000, guid: 2a9a82013d1c09f42adc6f25c4631b63,
       type: 2}
-    isExpanded: 0
+    isExpanded: 1
   - languageID: sv-SE
     languageName: Swedish
     localizedName: Svenska
     localizationLanguage: {fileID: 11400000, guid: 9e386c4fbe09d594e8c81d53c3b2c9d0,
       type: 2}
-    isExpanded: 0
+    isExpanded: 1
   - languageID: tr-TR
     languageName: Turkish
     localizedName: "T\xFCrk\xE7e"
     localizationLanguage: {fileID: 11400000, guid: 8d3376ccffec1fb4eb27e25b3629b305,
       type: 2}
-    isExpanded: 0
+    isExpanded: 1
+  - languageID: ch-CH
+    languageName: "\u4E2D\u6587"
+    localizedName: "\u4E2D\u6587"
+    localizationLanguage: {fileID: 11400000, guid: 70ea43dec27c9c242920c9d04c3fefba,
+      type: 2}
+    isExpanded: 1
   tables:
   - tableID: UI
     localizationTable: {fileID: 11400000, guid: c4d223e438e911a44aecec230da547ea,
