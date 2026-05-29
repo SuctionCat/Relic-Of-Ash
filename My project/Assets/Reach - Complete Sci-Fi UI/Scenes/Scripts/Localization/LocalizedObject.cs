@@ -93,6 +93,8 @@ namespace Michsky.UI.Reach
         {
             if (!isInitialized || LocalizationManager.instance == null || LocalizationManager.instance.currentLanguageAsset == null || LocalizationManager.instance.currentLanguageAsset.tableList.Count == 0)
                 return;
+            if (tableIndex < 0 || tableIndex >= LocalizationManager.instance.currentLanguageAsset.tableList.Count)
+                return;
 
             if (objectType == ObjectType.TextMeshPro && textObj != null)
             {
@@ -182,6 +184,8 @@ namespace Michsky.UI.Reach
             if (LocalizationManager.instance != null && LocalizationManager.instance.currentLanguageAsset == null) { LocalizationManager.instance.InitializeLanguage(); }
             if (!isInitialized || LocalizationManager.instance == null || LocalizationManager.instance.currentLanguageAsset == null || LocalizationManager.instance.currentLanguageAsset.tableList.Count == 0)
                 return LocalizationSettings.notInitializedText;
+            if (tableIndex < 0 || tableIndex >= LocalizationManager.instance.currentLanguageAsset.tableList.Count)
+                return LocalizationSettings.notInitializedText;
 
             for (int i = 0; i < LocalizationManager.instance.currentLanguageAsset.tableList[tableIndex].tableContent.Count; i++)
             {
@@ -216,6 +220,8 @@ namespace Michsky.UI.Reach
             if (LocalizationManager.instance != null && LocalizationManager.instance.currentLanguageAsset == null) { LocalizationManager.instance.InitializeLanguage(); }
             if (!isInitialized || LocalizationManager.instance == null || LocalizationManager.instance.currentLanguageAsset == null || LocalizationManager.instance.currentLanguageAsset.tableList.Count == 0)
                 return null;
+            if (tableIndex < 0 || tableIndex >= LocalizationManager.instance.currentLanguageAsset.tableList.Count)
+                return null;
 
             for (int i = 0; i < LocalizationManager.instance.currentLanguageAsset.tableList[tableIndex].tableContent.Count; i++)
             {
@@ -249,6 +255,8 @@ namespace Michsky.UI.Reach
 
             if (LocalizationManager.instance != null && LocalizationManager.instance.currentLanguageAsset == null) { LocalizationManager.instance.InitializeLanguage(); }
             if (!isInitialized || LocalizationManager.instance == null || LocalizationManager.instance.currentLanguageAsset == null || LocalizationManager.instance.currentLanguageAsset.tableList.Count == 0)
+                return null;
+            if (tableIndex < 0 || tableIndex >= LocalizationManager.instance.currentLanguageAsset.tableList.Count)
                 return null;
 
             for (int i = 0; i < LocalizationManager.instance.currentLanguageAsset.tableList[tableIndex].tableContent.Count; i++)
