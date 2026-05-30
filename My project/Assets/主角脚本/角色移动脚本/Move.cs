@@ -36,6 +36,9 @@ public class ThirdPersonController : MonoBehaviour
     [Header("攻击动画列表")]
     public List<string> attackAnimationNames = new List<string> { "Attack", "Attack2", "Attack3", "Combo" }; // 攻击动画名称列表
 
+    [Header("跳跃动画设置")]
+    public string jumpAnimationName = "jump_02"; // 跳跃动画名称（在动画事件中调用 OnJumpAnimationEvent）
+
     // --- 🟢 索敌系统变量 ---
     private bool isTargeting = false;       // 是否开启索敌模式
     public Transform currentTarget;         // 当前锁定的目标
@@ -67,7 +70,6 @@ public class ThirdPersonController : MonoBehaviour
         attackAnimationHashes.Clear();
         foreach (string animName in attackAnimationNames)
         {
-            // 使用 Animator.StringToHash 将动画名称转换为Hash值
             int hash = Animator.StringToHash(animName);
             attackAnimationHashes.Add(hash);
         }
@@ -95,9 +97,11 @@ public class ThirdPersonController : MonoBehaviour
             velocity.y = -2f; 
             isAirborne = false; 
         }
+    }
 
-        // 跳跃输入
-        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed())
+    public void OnJumpAnimationEvent()
+    {
+        if (controller.isGrounded)
         {
             Jump();
         }
@@ -287,11 +291,6 @@ public class ThirdPersonController : MonoBehaviour
         if (animator == null) return;
         float speed = isAirborne ? moveDir.magnitude : moveDir.magnitude; 
         animator.SetFloat("Speed", speed);
-
-        if (Input.GetButtonDown("Jump") && controller.isGrounded && IsJumpAllowed())
-        {
-             animator.SetTrigger("Jump");
-        }
     }
 
     void OnAnimatorMove()
