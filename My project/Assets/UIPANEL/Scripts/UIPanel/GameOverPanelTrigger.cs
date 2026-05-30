@@ -5,21 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class GameOverPanelTrigger : MonoBehaviour
 {
-    private void Update()
+    public void OnBossDeath()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("F key detected!");
-            LoadScene3();
-        }
+        Debug.Log("Boss生命值归零，5秒后加载结束场景...");
+        Invoke("LoadEndScene", 5f);
     }
 
-    private void LoadScene3()
+    private void LoadEndScene()
     {
-        Debug.Log("F key pressed, loading Scene3...");
         AudioManager.PlayClick();
-
-        // 使用 Unity 原生场景加载方法
-        SceneManager.LoadScene("Scene3");
+        SceneManager.LoadScene("EndScene");
     }
 }

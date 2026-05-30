@@ -48,8 +48,8 @@ public StartPanel():base(UIPanelType)
     private void LoadButtonClick()
     {
         AudioManager.PlayClick();
-        Scene2 scene2 = new Scene2();
-        GameRoot.GetInstance().ScenesControl_Root.LoadSceneAsync(scene2.SceneName, scene2);
+        PlayScene playScene = new PlayScene();
+        GameRoot.GetInstance().ScenesControl_Root.LoadSceneAsync(playScene.SceneName, playScene);
     }
 
     public override void OnEnable()

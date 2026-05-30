@@ -31,10 +31,10 @@ RectTransform:
   - {fileID: 1971362015550626525}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.00048065}
-  m_SizeDelta: {x: 800, y: 449.64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &902892710215048827
 GameObject:
@@ -793,8 +793,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Item Title
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1dc63755101defb4e92bc32243eed6c9, type: 2}
-  m_sharedMaterial: {fileID: -7928643681905721458, guid: 1dc63755101defb4e92bc32243eed6c9,
+  m_fontAsset: {fileID: 11400000, guid: 9ac1626ff01121a4785954bee6c620ea, type: 2}
+  m_sharedMaterial: {fileID: 126959951372797201, guid: 9ac1626ff01121a4785954bee6c620ea,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1201,8 +1201,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Description here.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1dc63755101defb4e92bc32243eed6c9, type: 2}
-  m_sharedMaterial: {fileID: -7928643681905721458, guid: 1dc63755101defb4e92bc32243eed6c9,
+  m_fontAsset: {fileID: 11400000, guid: 9ac1626ff01121a4785954bee6c620ea, type: 2}
+  m_sharedMaterial: {fileID: 126959951372797201, guid: 9ac1626ff01121a4785954bee6c620ea,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2364,7 +2364,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000030517578, y: 0.000015258789}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1014117970350897529
@@ -2389,7 +2389,7 @@ MonoBehaviour:
         m_Calls: []
     titleKey: NewsItemTitle1
     descriptionKey: NewsItemDescription1
-    buttonTextKey: ButtonMoreDetails
+    buttonTextKey: 
   - title: "\u5C60\u9F99\u8005\u7EC8\u6210\u6076\u9F99\uFF0C\u4F0A\u7538\u56ED\u91CC\uFF0C\u518D\u65E0\u4EBA\u7C7B"
     description: 
     background: {fileID: 21300000, guid: c8ecd8f6dcfe2314e9d327bdf3402b90, type: 3}
@@ -2417,7 +2417,7 @@ MonoBehaviour:
     type: 3}
   timerParent: {fileID: 1155198595781331703}
   allowUpdate: 1
-  useLocalization: 1
+  useLocalization: 0
   sliderTimer: 4
   updateMode: 0
 --- !u!114 &143304896525266139

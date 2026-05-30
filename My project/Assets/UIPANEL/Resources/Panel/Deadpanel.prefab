@@ -2750,8 +2750,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 264.74966, y: -136.5}
-  m_SizeDelta: {x: 529.4993, y: 0}
+  m_AnchoredPosition: {x: 336.74963, y: -177}
+  m_SizeDelta: {x: 673.49927, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4436318866717992084
 MonoBehaviour:
@@ -2926,7 +2926,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 193.04967, y: -25}
+  m_AnchoredPosition: {x: 265.04962, y: -25}
   m_SizeDelta: {x: 117.91, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6180336134974275338
@@ -2973,8 +2973,8 @@ MonoBehaviour:
   enableText: 1
   useCustomContent: 0
   useCustomTextSize: 0
-  checkForDoubleClick: 1
-  useLocalization: 1
+  checkForDoubleClick: 0
+  useLocalization: 0
   bypassUpdateOnEnable: 0
   useUINavigation: 0
   navigationMode: 3
@@ -3004,7 +3004,7 @@ MonoBehaviour:
   onDeselect:
     m_PersistentCalls:
       m_Calls: []
-  latestTabIndex: 1
+  latestTabIndex: 2
 --- !u!114 &6238115817202960880
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3339,7 +3339,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 336.20465, y: -25}
+  m_AnchoredPosition: {x: 408.20465, y: -25}
   m_SizeDelta: {x: 118.399994, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1105926983975965729
@@ -3386,8 +3386,8 @@ MonoBehaviour:
   enableText: 1
   useCustomContent: 0
   useCustomTextSize: 0
-  checkForDoubleClick: 1
-  useLocalization: 1
+  checkForDoubleClick: 0
+  useLocalization: 0
   bypassUpdateOnEnable: 0
   useUINavigation: 0
   navigationMode: 3
@@ -3417,7 +3417,7 @@ MonoBehaviour:
   onDeselect:
     m_PersistentCalls:
       m_Calls: []
-  latestTabIndex: 0
+  latestTabIndex: 2
 --- !u!114 &2674774950404708798
 MonoBehaviour:
   m_ObjectHideFlags: 0
