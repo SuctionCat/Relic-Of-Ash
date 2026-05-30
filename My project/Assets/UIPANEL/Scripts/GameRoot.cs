@@ -83,14 +83,14 @@ public class GameRoot : MonoBehaviour
             IsGamePaused = false;
             Time.timeScale = 1.0f;
             // 根据当前场景决定是否锁定鼠标
-            // 在主菜单场景(Scene1)中，鼠标应该保持可见
-            // 在游戏场景(Scene2)中，鼠标应该被锁定
-            if(currentSceneName == "Scene2")
+            // 在主菜单场景(MenuScene)中，鼠标应该保持可见
+            // 在游戏场景(PlayScene)中，鼠标应该被锁定
+            if(currentSceneName == "PlayScene")
             {
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
-            else if(currentSceneName == "Scene1")
+            else if(currentSceneName == "MenuScene")
             {
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
@@ -103,7 +103,7 @@ public class GameRoot : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(currentSceneName == "Scene2")
+            if(currentSceneName == "PlayScene")
             {
                 bool hasPausePanel = false;
                 foreach(var panel in UIManager_Root.stack_ui)
@@ -121,7 +121,7 @@ public class GameRoot : MonoBehaviour
                 Debug.Log("检测到ESC键，打开暂停菜单");
                 UIManager_Root.Push(new PausePanel());
             }
-            else if(currentSceneName == "Scene1")
+            else if(currentSceneName == "MenuScene")
             {
                 Debug.Log("检测到ESC键，打开退出游戏面板");
                 UIManager_Root.Push(new QuitPanel());
@@ -168,8 +168,8 @@ public class GameRoot : MonoBehaviour
         {
             Debug.LogError("Canvas object not found");
         }
-        Scene1 scene1 = new Scene1();
-        ScenesControl_Root.dict_scenes.Add(scene1.SceneName,scene1);
+        MenuScene menuScene = new MenuScene();
+        ScenesControl_Root.dict_scenes.Add(menuScene.SceneName,menuScene);
         #region
         UIManager_Root.Push(new InitialPanel());
         #endregion

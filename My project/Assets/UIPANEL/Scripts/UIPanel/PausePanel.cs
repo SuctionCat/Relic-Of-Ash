@@ -63,8 +63,8 @@ public class PausePanel : BasePanel
         
         GameRoot.GetInstance().UIManager_Root.Pop(true);
         
-        Scene1 scene1 = new Scene1();
-        GameRoot.GetInstance().ScenesControl_Root.LoadScene(scene1.SceneName, scene1);
+        MenuScene menuScene = new MenuScene();
+        GameRoot.GetInstance().ScenesControl_Root.LoadScene(menuScene.SceneName, menuScene);
     }
     
     private void SettingsButtonClick()

@@ -116,33 +116,57 @@ public class EnemyHealth : MonoBehaviour
         // 减少生命值
         currentHealth -= damageAmount;
         animator.SetFloat("Enemy_Health", currentHealth);
+        
+        // 通知BossState生命值变化
+        NotifyBossHealthChanged();
+        
         Debug.Log("受到攻击！伤害值：" + damageAmount);
         
         if (currentHealth <= 0)
+            {
+                // --- 敌人死亡逻辑 ---
+                animator.SetTrigger("Dead");
+                
+                // 禁用 AI 逻辑
+                if (enemyAI != null)
+                {
+                    enemyAI.enabled = false;
+                }
+
+                // 禁用碰撞体，让主角可以直接穿过去
+                if (capsuleCollider != null)
+                {
+                    capsuleCollider.enabled = false;
+                }
+                
+                // 如果敌人有 Rigidbody，建议禁用它
+                Rigidbody rb = GetComponent<Rigidbody>();
+                if (rb != null) rb.isKinematic = true;
+
+                Debug.Log("敌人死亡！碰撞体已移除。");
+
+                // 如果是Boss，触发游戏结束场景
+                BossState bossState = GetComponent<BossState>();
+                if (bossState != null)
+                {
+                    GameOverPanelTrigger gameOverTrigger = FindObjectOfType<GameOverPanelTrigger>();
+                    if (gameOverTrigger != null)
+                    {
+                        gameOverTrigger.OnBossDeath();
+                    }
+                }
+
+                // 延迟两秒销毁对象
+                Invoke("DestroyEnemy", 4f);
+            }
+        }
+    
+    private void NotifyBossHealthChanged()
+    {
+        BossState bossState = GetComponent<BossState>();
+        if (bossState != null)
         {
-            // --- 敌人死亡逻辑 ---
-            animator.SetTrigger("Dead");
-            
-            // 禁用 AI 逻辑
-            if (enemyAI != null)
-            {
-                enemyAI.enabled = false;
-            }
-
-            // 禁用碰撞体，让主角可以直接穿过去
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.enabled = false;
-            }
-            
-            // 如果敌人有 Rigidbody，建议禁用它
-            Rigidbody rb = GetComponent<Rigidbody>();
-            if (rb != null) rb.isKinematic = true;
-
-            Debug.Log("敌人死亡！碰撞体已移除。");
-
-            // 延迟两秒销毁对象
-            Invoke("DestroyEnemy", 4f);
+            bossState.OnHealthChanged(currentHealth);
         }
     }
 
