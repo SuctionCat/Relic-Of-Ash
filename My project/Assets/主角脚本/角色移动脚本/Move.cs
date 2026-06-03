@@ -33,6 +33,12 @@ public class ThirdPersonController : MonoBehaviour
     private bool isAttacking = false;        // 是否正在攻击
     private HashSet<int> attackAnimationHashes = new HashSet<int>(); // 攻击动画Hash缓存集合
 
+    // --- 🟢 禁止旋转动画变量 ---
+    private HashSet<int> noRotationAnimationHashes = new HashSet<int>(); // 禁止旋转动画Hash缓存集合
+
+    [Header("禁止旋转动画列表")]
+    public List<string> noRotationAnimationNames = new List<string>(); // 处于这些动画时禁止WASD旋转
+
     [Header("攻击动画列表")]
     public List<string> attackAnimationNames = new List<string> { "Attack", "Attack2", "Attack3", "Combo" }; // 攻击动画名称列表
 
@@ -72,6 +78,14 @@ public class ThirdPersonController : MonoBehaviour
         {
             int hash = Animator.StringToHash(animName);
             attackAnimationHashes.Add(hash);
+        }
+        
+        // 初始化禁止旋转动画Hash缓存
+        noRotationAnimationHashes.Clear();
+        foreach (string animName in noRotationAnimationNames)
+        {
+            int hash = Animator.StringToHash(animName);
+            noRotationAnimationHashes.Add(hash);
         }
     }
 
@@ -193,6 +207,7 @@ public class ThirdPersonController : MonoBehaviour
 
         // --- 🟢 智能旋转逻辑 ---
         bool hasInput = moveDir.magnitude > 0.1f;
+        bool isInNoRotationAnim = IsNoRotationAnimation(); // 检查是否处于禁止旋转动画
 
         // 1. 攻击时 -> 强制面向敌人（忽略WASD输入）
         if (isAttacking && isTargeting && currentTarget != null)
@@ -210,9 +225,9 @@ public class ThirdPersonController : MonoBehaviour
                 );
             }
         }
-        else if (hasInput)
+        else if (hasInput && !isInNoRotationAnim)
         {
-            // 2. 有 WASD 输入 -> 面向移动方向 (主导)
+            // 2. 有 WASD 输入 且 不处于禁止旋转动画 -> 面向移动方向 (主导)
             Quaternion targetRot = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
@@ -220,9 +235,9 @@ public class ThirdPersonController : MonoBehaviour
                 rotationSpeed * Time.deltaTime
             );
         }
-        else if (isTargeting && currentTarget != null)
+        else if (isTargeting && currentTarget != null && !isInNoRotationAnim)
         {
-            // 3. 无输入 且 索敌中 -> 面向敌人
+            // 3. 无输入 且 索敌中 且 不处于禁止旋转动画 -> 面向敌人
             Vector3 directionToEnemy = currentTarget.position - transform.position;
             directionToEnemy.y = 0; // 忽略高度差
             
@@ -275,6 +290,36 @@ public class ThirdPersonController : MonoBehaviour
         {
             string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
             foreach (string animName in attackAnimationNames)
+            {
+                if (clipName.Contains(animName))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    // 🟢 检查当前动画是否为禁止旋转动画
+    bool IsNoRotationAnimation()
+    {
+        if (animator == null || noRotationAnimationHashes.Count == 0)
+            return false;
+        
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+        
+        // 使用Hash比较
+        if (noRotationAnimationHashes.Contains(currentState.fullPathHash))
+        {
+            return true;
+        }
+        
+        // 备用检查：检查动画片段名称
+        if (animator.GetCurrentAnimatorClipInfo(0).Length > 0)
+        {
+            string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+            foreach (string animName in noRotationAnimationNames)
             {
                 if (clipName.Contains(animName))
                 {
