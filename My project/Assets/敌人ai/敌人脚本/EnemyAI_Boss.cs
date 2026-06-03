@@ -90,6 +90,15 @@ public class EnemyAI_Boss : EnemyAI
     // 行为切换的最小和最大间隔时间（秒）
     public float minBehaviorDuration = 2f;
     public float maxBehaviorDuration = 5f;
+    
+    // 玩家重生后Boss恢复攻击模式的延迟时间（秒）
+    public float respawnDelayDuration = 4f;
+    
+    // 是否正在等待重生延迟
+    private bool isWaitingAfterRespawn = false;
+    
+    // 重生延迟计时器
+    private float respawnDelayTimer = 0f;
 
     // 改写 Start 方法
     protected override void Start()
@@ -129,12 +138,45 @@ public class EnemyAI_Boss : EnemyAI
         // 重置追击计时器和行为状态
         chaseTimer = 0f;
         behaviorTimer = 0f;
+        
+        // 设置重生后延迟标志，玩家重生时会开始计时
+        isWaitingAfterRespawn = true;
+        respawnDelayTimer = 0f;
     }
 
     // 改写 Update 方法
     protected override void Update()
     {
         if (playerTransform == null || isPlayerDead) return;// 如果主角不存在或已死亡，直接返回
+        
+        // 如果正在等待重生延迟
+        if (isWaitingAfterRespawn)
+        {
+            respawnDelayTimer += Time.deltaTime;
+            
+            // 保持待机状态，面朝玩家
+            agent.isStopped = true;
+            animator.SetBool("Find_Player", false);
+            animator.SetBool("Stand", false);
+            
+            // 平滑面朝玩家
+            Vector3 targetDirection = playerTransform.position - transform.position;
+            targetDirection.y = 0;
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 2f);
+            
+            // 检查延迟是否结束
+            if (respawnDelayTimer >= respawnDelayDuration)
+            {
+                isWaitingAfterRespawn = false;
+                respawnDelayTimer = 0f;
+            }
+            else
+            {
+                // 延迟期间不执行其他逻辑
+                return;
+            }
+        }
 
         float distance = Vector3.Distance(transform.position, playerTransform.position);// 计算敌人到主角的距离
 
