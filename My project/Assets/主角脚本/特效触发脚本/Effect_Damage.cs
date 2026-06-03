@@ -47,7 +47,7 @@ public class Effect_Damage : MonoBehaviour
 
                 if (enemy != null)
                 {
-                    enemy.TakeHit(damage, knockback);
+                    enemy.TakeHit(damage, knockback, this.transform, false);
                     Debug.Log($"宽剑气击中了：{hit.collider.name}");
                     
                     // 击中后销毁
