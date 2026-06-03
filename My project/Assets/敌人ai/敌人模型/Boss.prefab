@@ -307,6 +307,7 @@ MonoBehaviour:
   circleRadiusMultiplier: 1.2
   minBehaviorDuration: 2
   maxBehaviorDuration: 3
+  respawnDelayDuration: 4
 --- !u!114 &2324597099896583255
 MonoBehaviour:
   m_ObjectHideFlags: 0
