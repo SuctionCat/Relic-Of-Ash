@@ -28,15 +28,15 @@ public class BossBarPanel : BasePanel
     {
         base.ONStart();
 
-        // 获取Bar对象下的Image组件（使用图片填充显示血量）
-        GameObject barObject = UImchud.GetInstance().FindObjectInChill(ActiveObj, "Bar");
-        if (barObject != null)
+        // 获取Bar Image对象下的Image组件（使用图片填充显示血量）
+        GameObject barImageObject = UImchud.GetInstance().FindObjectInChill(ActiveObj, "Bar Image");
+        if (barImageObject != null)
         {
-            healthBarImage = barObject.GetComponent<Image>();
-            if (healthBarImage == null)
-            {
-                healthBarImage = barObject.AddComponent<Image>();
-            }
+            healthBarImage = barImageObject.GetComponent<Image>();
+        }
+        else
+        {
+            Debug.LogError("BossBarPanel: 未获取到 Bar Image 对象，请检查UI层级结构");
         }
 
         // 注册Update方法到游戏循环
@@ -60,29 +60,47 @@ public class BossBarPanel : BasePanel
     {
         this.maxHealth = maxHealth;
         this.currentHealth = currentHealth;
+        targetHealthPercent = currentHealth / maxHealth;
 
-        UpdateHealthUI();
+        // 延迟获取Image组件（解决初始化顺序问题）
+        EnsureHealthBarImage();
+
         SetVisible(true);
+    }
+
+    // 确保获取到血条Image组件
+    private void EnsureHealthBarImage()
+    {
+        if (healthBarImage == null && ActiveObj != null)
+        {
+            GameObject barImageObject = UImchud.GetInstance().FindObjectInChill(ActiveObj, "Bar/Bar Image");
+            if (barImageObject != null)
+            {
+                healthBarImage = barImageObject.GetComponent<Image>();
+                if (healthBarImage != null)
+                {
+                    Debug.Log("BossBarPanel: 延迟获取 Bar/Bar Image 成功");
+                }
+            }
+        }
     }
 
     // 更新生命值
     public void UpdateHealth(float newHealth)
     {
         currentHealth = newHealth;
-        UpdateHealthUI();
-    }
-
-    // 更新UI显示
-    private void UpdateHealthUI()
-    {
-        if (maxHealth <= 0) return;
-
         targetHealthPercent = currentHealth / maxHealth;
 
-        if (healthBarImage != null)
-        {
-            healthBarImage.fillAmount = Mathf.MoveTowards(healthBarImage.fillAmount, targetHealthPercent, Time.deltaTime * smoothSpeed);
-        }
+        // 延迟获取Image组件（解决初始化顺序问题）
+        EnsureHealthBarImage();
+    }
+
+    // 更新UI显示（仅处理平滑动画）
+    private void UpdateHealthUI()
+    {
+        if (healthBarImage == null || maxHealth <= 0) return;
+
+        healthBarImage.fillAmount = Mathf.MoveTowards(healthBarImage.fillAmount, targetHealthPercent, Time.deltaTime * smoothSpeed);
     }
 
     private void Update()
