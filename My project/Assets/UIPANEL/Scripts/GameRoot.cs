@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using UnityEngine.SceneManagement;
+
 public class GameRoot : MonoBehaviour
 {
     private UIManager UIManager;
@@ -98,12 +100,16 @@ public class GameRoot : MonoBehaviour
         }
     }
 
-    // 处理ESC键打开对应面板
+    // 处理 ESC 键打开对应面板
     private void HandleESCKey()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            if(currentSceneName == "PlayScene")
+            // 获取Unity场景管理器中的实际场景名称
+            string actualSceneName = SceneManager.GetActiveScene().name;
+            Debug.Log($"HandleESCKey: 当前场景名称 = {actualSceneName} (currentSceneName = {currentSceneName})");
+            
+            if(actualSceneName == "PlayScene")
             {
                 bool hasPausePanel = false;
                 foreach(var panel in UIManager_Root.stack_ui)
@@ -118,13 +124,32 @@ public class GameRoot : MonoBehaviour
                 {
                     return;
                 }
-                Debug.Log("检测到ESC键，打开暂停菜单");
+                Debug.Log("检测到 ESC 键，打开暂停菜单");
                 UIManager_Root.Push(new PausePanel());
             }
-            else if(currentSceneName == "MenuScene")
+            else if(actualSceneName == "MenuScene")
             {
-                Debug.Log("检测到ESC键，打开退出游戏面板");
+                Debug.Log("检测到 ESC 键，打开退出游戏面板");
                 UIManager_Root.Push(new QuitPanel());
+            }
+            else if(actualSceneName == "EndScene")
+            {
+                Debug.Log("检测到 ESC 键，从 EndScene 返回主菜单");
+                Debug.Log($"ScenesControl_Root: {ScenesControl_Root}");
+                
+                AudioManager.PlayClick();
+                Debug.Log("播放点击音效完成");
+                
+                // 不调用 Pop(true)，直接加载场景
+                MenuScene menuScene = new MenuScene();
+                Debug.Log($"准备加载场景: {menuScene.SceneName}");
+                
+                ScenesControl_Root.LoadScene(menuScene.SceneName, menuScene);
+                Debug.Log($"调用 LoadScene({menuScene.SceneName}) 完成");
+            }
+            else
+            {
+                Debug.LogWarning($"HandleESCKey: 未知场景 {actualSceneName}，ESC键未处理");
             }
         }
     }

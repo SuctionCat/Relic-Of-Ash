@@ -16,6 +16,10 @@ public class EndScene : ScenesBase
         GameRoot.GetInstance().StartCoroutine(LoadPlayerStatsPanelCoroutine());
     }
 
+    public override void ExitScene()
+    {
+    }
+
     private System.Collections.IEnumerator LoadPlayerStatsPanelCoroutine()
     {
         yield return null;
@@ -23,10 +27,5 @@ public class EndScene : ScenesBase
 
         Debug.Log("正在加载PlayerStatsPanel...");
         GameRoot.GetInstance().UIManager_Root.Push(new PlayerStatsPanel());
-    }
-
-    public override void ExitScene()
-    {
-
     }
 }

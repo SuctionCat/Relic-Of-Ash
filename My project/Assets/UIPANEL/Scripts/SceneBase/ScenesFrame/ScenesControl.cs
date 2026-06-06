@@ -32,10 +32,13 @@ public class ScenesControl
     /// <param name="sceneBase">场景基类</param>
     public void LoadScene(string scene_name, ScenesBase sceneBase)
     {
+        Debug.Log($"ScenesControl.LoadScene: scene_name={scene_name}, isLoadingScene={isLoadingScene}");
+        
         if(isLoadingScene)
         {
-            Debug.LogWarning("正在加载场景中，请等待");
-            return;
+            Debug.LogWarning("正在加载场景中，强制重置状态");
+            // 强制重置加载状态，避免卡住
+            isLoadingScene = false;
         }
         
         GameRoot.GetInstance().StartCoroutine(LoadSceneCoroutine(scene_name, sceneBase, false));
@@ -48,10 +51,13 @@ public class ScenesControl
     /// <param name="sceneBase">场景基类</param>
     public void LoadSceneAsync(string scene_name, ScenesBase sceneBase)
     {
+        Debug.Log($"ScenesControl.LoadSceneAsync: scene_name={scene_name}, isLoadingScene={isLoadingScene}");
+        
         if(isLoadingScene)
         {
-            Debug.LogWarning("正在加载场景中，请等待");
-            return;
+            Debug.LogWarning("正在加载场景中，强制重置状态");
+            // 强制重置加载状态，避免卡住
+            isLoadingScene = false;
         }
         
         GameRoot.GetInstance().StartCoroutine(LoadSceneCoroutine(scene_name, sceneBase, true));
@@ -59,24 +65,43 @@ public class ScenesControl
     
     private IEnumerator LoadSceneCoroutine(string scene_name, ScenesBase sceneBase, bool showLoadingPanel)
     {
+        Debug.Log($"LoadSceneCoroutine: 开始加载场景 {scene_name}");
         isLoadingScene = true;
         
         if(!dict_scenes.ContainsKey(scene_name))
         {
             dict_scenes.Add(scene_name, sceneBase);
+            Debug.Log($"LoadSceneCoroutine: 添加场景到字典 {scene_name}");
         }
         
         string currentSceneName = SceneManager.GetActiveScene().name;
+        Debug.Log($"LoadSceneCoroutine: 当前场景 {currentSceneName}");
+        
         if(dict_scenes.ContainsKey(currentSceneName))
         {
             ScenesBase currentScene = dict_scenes[currentSceneName];
             if(currentScene != null)
             {
+                Debug.Log($"LoadSceneCoroutine: 调用 {currentSceneName}.ExitScene()");
                 currentScene.ExitScene();
             }
         }
+        else
+        {
+            Debug.LogWarning($"LoadSceneCoroutine: 当前场景 {currentSceneName} 不在字典中");
+        }
         
-        GameRoot.GetInstance().UIManager_Root.Pop(true);
+        Debug.Log("LoadSceneCoroutine: 调用 UIManager.Pop(true)");
+        try
+        {
+            GameRoot.GetInstance().UIManager_Root.Pop(true);
+            Debug.Log("LoadSceneCoroutine: UIManager.Pop(true) 成功");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"LoadSceneCoroutine: UIManager.Pop(true) 出现异常: {e.Message}");
+            // 继续执行场景加载，不被异常打断
+        }
         
         if(showLoadingPanel)
         {
@@ -119,6 +144,7 @@ public class ScenesControl
             loadingPanel = null;
         }
         
+        Debug.Log($"LoadSceneCoroutine: 允许场景激活: {scene_name}");
         asyncOperation.allowSceneActivation = true;
         
         while(!asyncOperation.isDone)
@@ -126,6 +152,7 @@ public class ScenesControl
             yield return null;
         }
         
+        Debug.Log($"LoadSceneCoroutine: 场景 {scene_name} 激活完成");
         yield return null;
         
         GameObject newCanvas = UImchud.GetInstance().FindCanvas();
@@ -139,10 +166,15 @@ public class ScenesControl
             Debug.LogWarning("场景切换后未找到Canvas对象");
         }
         
+        Debug.Log($"LoadSceneCoroutine: 调用 {scene_name}.EnterScene()");
         sceneBase.EnterScene();
+        Debug.Log($"LoadSceneCoroutine: {scene_name}.EnterScene() 调用完成");
+        
         dict_scenes[scene_name] = sceneBase;
         
         isLoadingScene = false;
+        Debug.Log($"LoadSceneCoroutine: 场景 {scene_name} 加载完成");
+        Debug.Log($"LoadSceneCoroutine: 当前场景名称: {SceneManager.GetActiveScene().name}");
     }
     
     private string GetLoadingTip(float progress)

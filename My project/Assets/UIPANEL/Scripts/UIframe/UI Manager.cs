@@ -72,6 +72,7 @@ public class UIManager
     {
        if(dict_uiObject.ContainsKey(uITepy.Name))
        {
+        Debug.Log($"GetSingleObject: {uITepy.Name} 已存在于字典中");
         return dict_uiObject[uITepy.Name];
        }
 
@@ -80,50 +81,95 @@ public class UIManager
 
        if(CanvasObj == null)
        {
-           Debug.LogError("Canvas对象为空，无法加载UI");
+           Debug.LogError("GetSingleObject: Canvas对象为空，无法加载UI");
            return null;
        }
+       
+       Debug.Log($"GetSingleObject: CanvasObj={CanvasObj.name}, Canvas场景={CanvasObj.scene.name}, 当前场景={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
 
        GameObject prefab = Resources.Load<GameObject>(uITepy.Path);
        if(prefab == null)
        {
-           Debug.Log($"未能加载UI资源: {uITepy.Path}");
+           Debug.LogError($"GetSingleObject: 未能加载UI资源: {uITepy.Path}");
            return null;
        }
+       Debug.Log($"GetSingleObject: 成功加载预制体: {prefab.name}");
+       
        GameObject gameObject = GameObject.Instantiate<GameObject>(prefab, CanvasObj.transform);
+       Debug.Log($"GetSingleObject: 成功创建对象: {gameObject.name}, 父对象={gameObject.transform.parent?.name}, active={gameObject.activeSelf}");
+       
        dict_uiObject.Add(uITepy.Name, gameObject);
        return gameObject;
     }
     public void Push(BasePanel basePanel_push)
     {
-       Debug.Log($"{basePanel_push.uiType.Name}入栈");
+       Debug.Log($"{basePanel_push.uiType.Name}入栈 - 开始");
+       Debug.Log($"{basePanel_push.uiType.Name}入栈 - 栈大小: {stack_ui.Count}");
+       
       if(stack_ui.Count > 0)
       {
-        stack_ui.Peek().OnDisable();
+        Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板: {stack_ui.Peek().uiType.Name}");
+        try
+        {
+            stack_ui.Peek().OnDisable();
+            Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板完成");
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogError($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板异常: {e.Message}");
+        }
       }
+      
+      Debug.Log($"{basePanel_push.uiType.Name}入栈 - 调用 GetSingleObject");
       GameObject ui_object = GetSingleObject(basePanel_push.uiType);
+      
       if(ui_object == null)
       {
-          Debug.Log($"未能创建UI对象: {basePanel_push.uiType.Name}");
+          Debug.LogError($"{basePanel_push.uiType.Name}入栈 - 未能创建UI对象");
           return;
       }
+      
+      Debug.Log($"{basePanel_push.uiType.Name}入栈 - UI对象创建成功");
+      
       if(!dict_uiObject.ContainsKey(basePanel_push.uiType.Name))
       {
           dict_uiObject.Add(basePanel_push.uiType.Name, ui_object);
+          Debug.Log($"{basePanel_push.uiType.Name}入栈 - 添加到字典");
       }
+      
       basePanel_push.ActiveObj = ui_object;
+      Debug.Log($"{basePanel_push.uiType.Name}入栈 - 设置ActiveObj");
+      
       if(stack_ui.Count==0)
       {
         stack_ui.Push(basePanel_push);
+        Debug.Log($"{basePanel_push.uiType.Name}入栈 - 压入空栈");
       }
       else
       {
         if(stack_ui.Peek().uiType.Name!=basePanel_push.uiType.Name)
         {
           stack_ui.Push(basePanel_push);
+          Debug.Log($"{basePanel_push.uiType.Name}入栈 - 压入非空栈");
+        }
+        else
+        {
+          Debug.Log($"{basePanel_push.uiType.Name}入栈 - 已存在，不重复压入");
         }
       }
-      basePanel_push.ONStart();
+      
+      Debug.Log($"{basePanel_push.uiType.Name}入栈 - 调用 ONStart");
+      try
+      {
+          basePanel_push.ONStart();
+          Debug.Log($"{basePanel_push.uiType.Name}入栈 - ONStart 完成");
+      }
+      catch(System.Exception e)
+      {
+          Debug.LogError($"{basePanel_push.uiType.Name}入栈 - ONStart 异常: {e.Message}");
+      }
+      
+      Debug.Log($"{basePanel_push.uiType.Name}入栈 - 完成");
     }
     //<summary>
     ///禁用除指定面板外的所有面板
