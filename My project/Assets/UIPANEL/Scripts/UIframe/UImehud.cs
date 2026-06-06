@@ -18,13 +18,28 @@ public class UImchud
     }
     public GameObject FindCanvas()
     {
-        GameObject canvas = GameObject.FindObjectOfType<Canvas>().gameObject;
-        if(canvas == null)
+        Canvas[] canvases = GameObject.FindObjectsOfType<Canvas>();
+        string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        
+        // 优先查找当前场景中的Canvas
+        foreach (Canvas canvas in canvases)
         {
-            Debug.Log($"未能成功获得Canvas物体");
-            return null;
+            if (canvas.gameObject.scene.name == currentSceneName)
+            {
+                Debug.Log($"找到当前场景 {currentSceneName} 的Canvas: {canvas.name}");
+                return canvas.gameObject;
+            }
         }
-        return canvas;
+        
+        // 如果没找到当前场景的Canvas，返回第一个找到的（保持兼容性）
+        if (canvases.Length > 0)
+        {
+            Debug.LogWarning($"未找到当前场景 {currentSceneName} 的Canvas，使用第一个Canvas: {canvases[0].name}");
+            return canvases[0].gameObject;
+        }
+        
+        Debug.Log("未能成功获得Canvas物体");
+        return null;
     }
     public T GetOrAddComponent<T>(GameObject obj) where T : Component
     {
