@@ -36,7 +36,15 @@ public class PlayScene : ScenesBase
 
     public override void ExitScene()
     {
-
+        // 在离开PlayScene时清空UI栈，确保其他场景有干净的UI状态
+        Debug.Log("PlayScene.ExitScene: 清空UI栈");
+        var uiManager = GameRoot.GetInstance().UIManager_Root;
+        while(uiManager.stack_ui.Count > 0)
+        {
+            BasePanel panel = uiManager.stack_ui.Peek();
+            Debug.Log($"PlayScene.ExitScene: 移除面板: {panel.uiType.Name}");
+            uiManager.Pop(true);
+        }
     }
 
 }

@@ -65,8 +65,40 @@ public class ScenesControl
     
     private IEnumerator LoadSceneCoroutine(string scene_name, ScenesBase sceneBase, bool showLoadingPanel)
     {
-        Debug.Log($"LoadSceneCoroutine: 开始加载场景 {scene_name}");
+        Debug.Log($"LoadSceneCoroutine: ========== 开始加载场景 {scene_name} ==========");
+        Debug.Log($"LoadSceneCoroutine: 当前活动场景: {SceneManager.GetActiveScene().name}");
+        Debug.Log($"LoadSceneCoroutine: 当前isLoadingScene状态: {isLoadingScene}");
         isLoadingScene = true;
+        
+        // 清空UI栈，确保新场景有干净的UI状态
+        int initialStackSize = GameRoot.GetInstance().UIManager_Root.stack_ui.Count;
+        Debug.Log($"LoadSceneCoroutine: 清空UI栈，当前栈大小: {initialStackSize}");
+        
+        if(initialStackSize > 0)
+        {
+            Debug.Log("LoadSceneCoroutine: 栈中面板列表:");
+            foreach(var panel in GameRoot.GetInstance().UIManager_Root.stack_ui)
+            {
+                Debug.Log($"  - {panel.uiType.Name}");
+            }
+        }
+        
+        while(GameRoot.GetInstance().UIManager_Root.stack_ui.Count > 0)
+        {
+            try
+            {
+                GameRoot.GetInstance().UIManager_Root.Pop(true);
+                Debug.Log($"LoadSceneCoroutine: 弹出一个面板，剩余栈大小: {GameRoot.GetInstance().UIManager_Root.stack_ui.Count}");
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"LoadSceneCoroutine: 弹出面板异常: {e.Message}");
+                break;
+            }
+        }
+        Debug.Log($"LoadSceneCoroutine: UI栈清空完成，共弹出 {initialStackSize} 个面板");
+        Debug.Log($"LoadSceneCoroutine: 清空后栈大小: {GameRoot.GetInstance().UIManager_Root.stack_ui.Count}");
+        Debug.Log($"LoadSceneCoroutine: 清空后字典大小: {GameRoot.GetInstance().UIManager_Root.dict_uiObject.Count}");
         
         if(!dict_scenes.ContainsKey(scene_name))
         {
@@ -84,6 +116,7 @@ public class ScenesControl
             {
                 Debug.Log($"LoadSceneCoroutine: 调用 {currentSceneName}.ExitScene()");
                 currentScene.ExitScene();
+                Debug.Log($"LoadSceneCoroutine: {currentSceneName}.ExitScene() 调用完成");
             }
         }
         else
@@ -140,7 +173,16 @@ public class ScenesControl
         
         if(loadingPanel != null)
         {
-            GameRoot.GetInstance().UIManager_Root.Pop(true);
+            Debug.Log("ScenesControl: 开始移除 LoadingPanel");
+            try
+            {
+                GameRoot.GetInstance().UIManager_Root.Pop(true);
+                Debug.Log("ScenesControl: LoadingPanel 移除成功");
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"ScenesControl: 移除 LoadingPanel 异常: {e.Message}");
+            }
             loadingPanel = null;
         }
         

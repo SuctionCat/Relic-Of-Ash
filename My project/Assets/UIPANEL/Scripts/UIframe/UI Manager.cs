@@ -53,53 +53,99 @@ public class UIManager
     /// </summary>
     private void EnsureCanvasExists()
     {
+        Debug.Log($"EnsureCanvasExists: CanvasObj当前状态={CanvasObj != null}");
+        
         if(CanvasObj == null)
         {
-            Debug.Log("Canvas对象为空，尝试查找...");
+            Debug.Log("EnsureCanvasExists: Canvas对象为空，尝试查找...");
             CanvasObj = UImchud.GetInstance().FindCanvas();
             if(CanvasObj == null)
             {
-                Debug.LogError("无法找到Canvas对象！");
+                Debug.LogError("EnsureCanvasExists: 无法找到Canvas对象！");
             }
             else
             {
-                Debug.Log("成功找到Canvas对象");
+                Debug.Log($"EnsureCanvasExists: 成功找到Canvas对象: {CanvasObj.name}, 场景={CanvasObj.scene.name}");
             }
+        }
+        else
+        {
+            Debug.Log($"EnsureCanvasExists: CanvasObj已存在: {CanvasObj.name}, 场景={CanvasObj.scene.name}");
         }
     }
 
     public GameObject GetSingleObject(UITepy uITepy)
     {
-       if(dict_uiObject.ContainsKey(uITepy.Name))
-       {
-        Debug.Log($"GetSingleObject: {uITepy.Name} 已存在于字典中");
-        return dict_uiObject[uITepy.Name];
-       }
+        try
+        {
+            Debug.Log($"GetSingleObject: ========== 开始加载 {uITepy.Name} ==========");
+            Debug.Log($"GetSingleObject: 路径={uITepy.Path}, 名称={uITepy.Name}");
+            
+            // 检查字典是否初始化
+            if(dict_uiObject == null)
+            {
+                Debug.LogError("GetSingleObject: dict_uiObject 为 null，重新初始化");
+                dict_uiObject = new Dictionary<string, GameObject>();
+            }
+            Debug.Log($"GetSingleObject: dict_uiObject 状态正常，计数={dict_uiObject.Count}");
+            
+            // 检查字典中是否存在该对象
+            if(dict_uiObject.ContainsKey(uITepy.Name))
+            {
+                GameObject existingObj = dict_uiObject[uITepy.Name];
+                
+                // 检查对象是否已被销毁
+                if(existingObj == null)
+                {
+                    Debug.LogError($"GetSingleObject: {uITepy.Name} 在字典中但对象已被销毁，移除无效引用");
+                    dict_uiObject.Remove(uITepy.Name);
+                }
+                else
+                {
+                    // 使用 CompareTag 代替直接访问 activeSelf，避免访问已销毁对象
+                    Debug.Log($"GetSingleObject: {uITepy.Name} 已存在于字典中");
+                    return existingObj;
+                }
+            }
 
-       // 确保Canvas存在
-       EnsureCanvasExists();
+            // 确保Canvas存在
+            Debug.Log($"GetSingleObject: 步骤1 - 确保Canvas存在");
+            EnsureCanvasExists();
 
-       if(CanvasObj == null)
-       {
-           Debug.LogError("GetSingleObject: Canvas对象为空，无法加载UI");
-           return null;
-       }
-       
-       Debug.Log($"GetSingleObject: CanvasObj={CanvasObj.name}, Canvas场景={CanvasObj.scene.name}, 当前场景={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
+            if(CanvasObj == null)
+            {
+                Debug.LogError("GetSingleObject: Canvas对象为空，无法加载UI");
+                return null;
+            }
+            
+            Debug.Log($"GetSingleObject: 步骤2 - CanvasObj={CanvasObj.name}, Canvas场景={CanvasObj.scene.name}, 当前场景={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
 
-       GameObject prefab = Resources.Load<GameObject>(uITepy.Path);
-       if(prefab == null)
-       {
-           Debug.LogError($"GetSingleObject: 未能加载UI资源: {uITepy.Path}");
-           return null;
-       }
-       Debug.Log($"GetSingleObject: 成功加载预制体: {prefab.name}");
-       
-       GameObject gameObject = GameObject.Instantiate<GameObject>(prefab, CanvasObj.transform);
-       Debug.Log($"GetSingleObject: 成功创建对象: {gameObject.name}, 父对象={gameObject.transform.parent?.name}, active={gameObject.activeSelf}");
-       
-       dict_uiObject.Add(uITepy.Name, gameObject);
-       return gameObject;
+            Debug.Log($"GetSingleObject: 步骤3 - 开始加载资源: Resources/Panel/{uITepy.Name}");
+            GameObject prefab = Resources.Load<GameObject>(uITepy.Path);
+            if(prefab == null)
+            {
+                Debug.LogError($"GetSingleObject: 步骤3失败 - 未能加载UI资源: {uITepy.Path}");
+                Debug.LogError($"GetSingleObject: 请检查 Resources/Panel/ 目录下是否存在 {uITepy.Name}.prefab");
+                return null;
+            }
+            Debug.Log($"GetSingleObject: 步骤3成功 - 成功加载预制体: {prefab.name}");
+            
+            Debug.Log($"GetSingleObject: 步骤4 - 开始实例化对象");
+            GameObject gameObject = GameObject.Instantiate<GameObject>(prefab, CanvasObj.transform);
+            Debug.Log($"GetSingleObject: 步骤4成功 - 成功创建对象: {gameObject.name}, 父对象={gameObject.transform.parent?.name}, active={gameObject.activeSelf}");
+            
+            dict_uiObject.Add(uITepy.Name, gameObject);
+            Debug.Log($"GetSingleObject: 步骤5 - 添加到字典完成");
+            
+            Debug.Log($"GetSingleObject: ========== 加载 {uITepy.Name} 完成 ==========");
+            return gameObject;
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogError($"GetSingleObject: 加载 {uITepy.Name} 时发生异常: {e.Message}");
+            Debug.LogError($"GetSingleObject: 异常堆栈: {e.StackTrace}");
+            return null;
+        }
     }
     public void Push(BasePanel basePanel_push)
     {
@@ -108,15 +154,26 @@ public class UIManager
        
       if(stack_ui.Count > 0)
       {
-        Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板: {stack_ui.Peek().uiType.Name}");
-        try
+        BasePanel topPanel = stack_ui.Peek();
+        Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板: {topPanel.uiType.Name}");
+        
+        // 检查栈顶面板的对象是否已被销毁
+        if(topPanel.ActiveObj == null)
         {
-            stack_ui.Peek().OnDisable();
-            Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板完成");
+            Debug.LogError($"{basePanel_push.uiType.Name}入栈 - 栈顶面板 {topPanel.uiType.Name} 的对象已被销毁，从栈中移除");
+            stack_ui.Pop();
         }
-        catch(System.Exception e)
+        else
         {
-            Debug.LogError($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板异常: {e.Message}");
+            try
+            {
+                topPanel.OnDisable();
+                Debug.Log($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板完成");
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogError($"{basePanel_push.uiType.Name}入栈 - 禁用上一个面板异常: {e.Message}");
+            }
         }
       }
       
@@ -209,21 +266,33 @@ public class UIManager
     /// </summary>
     public void Pop(bool isload)
     {
+        Debug.Log($"UIManager.Pop: isload={isload}, 当前栈大小={stack_ui.Count}");
+        
         if(isload == true)
         {
+            int initialCount = stack_ui.Count;
+            Debug.Log($"UIManager.Pop(true): 开始清空栈，当前栈大小={initialCount}");
+            
             while(stack_ui.Count>0)
             {
                 BasePanel topPanel = stack_ui.Peek();
+                string panelName = topPanel.uiType.Name;
+                Debug.Log($"UIManager.Pop(true): 正在销毁面板: {panelName}");
+                
                 topPanel.OnDisable();
                 topPanel.OnDestroy();
-                string panelName = topPanel.uiType.Name;
+                
                 if(dict_uiObject.ContainsKey(panelName))
                 {
                     GameObject.Destroy(dict_uiObject[panelName]);
                     dict_uiObject.Remove(panelName);
+                    Debug.Log($"UIManager.Pop(true): 销毁成功，字典已移除: {panelName}");
                 }
                 stack_ui.Pop();
+                Debug.Log($"UIManager.Pop(true): 弹出完成，剩余栈大小={stack_ui.Count}");
             }
+            
+            Debug.Log($"UIManager.Pop(true): 清空完成，共销毁 {initialCount} 个面板");
         }
         else
         {
