@@ -46,50 +46,74 @@ public PlayerStatsPanel():base(UIPanelType)
     // Start is called before the first frame update
     public override void ONStart()
     {
-        base.ONStart();
-        UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"Back").onClick.AddListener(BackButtonClick);
-        
-        // 获取血量UI组件
-        healthBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "HealthBar");
-        shieldBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "ShieldBar");
-        healthText = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "HealthText");
-        shieldText = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "ShieldText");
-        healthText1 = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "HealthText1");
-        shieldText1 = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "ShieldText1");
-        
-        // 获取技能按钮引用
-        buttonE = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonE");
-        buttonQ = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonQ");
-        
-        // 尝试获取冷却时间文本（如果存在）
-        cooldownTextE = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj,"CooldownTextE");
-        cooldownTextQ = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj,"CooldownTextQ");
-        
-        // 初始隐藏冷却文本
-        if(cooldownTextE != null)
+        try
         {
-            cooldownTextE.gameObject.SetActive(false);
+            Debug.Log($"PlayerStatsPanel.ONStart: ========== 开始初始化 ==========");
+            base.ONStart();
+            
+            Debug.Log($"PlayerStatsPanel.ONStart: ActiveObj={ActiveObj?.name ?? "null"}");
+            
+            // 获取血量UI组件
+            Debug.Log($"PlayerStatsPanel.ONStart: 获取血量UI组件");
+            healthBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "HealthBar");
+            shieldBarImage = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj, "ShieldBar");
+            healthText = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "HealthText");
+            shieldText = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "ShieldText");
+            healthText1 = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "HealthText1");
+            shieldText1 = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj, "ShieldText1");
+            
+            Debug.Log($"PlayerStatsPanel.ONStart: healthBarImage={healthBarImage != null}, shieldBarImage={shieldBarImage != null}");
+            Debug.Log($"PlayerStatsPanel.ONStart: healthText={healthText != null}, shieldText={shieldText != null}");
+            
+            // 获取技能按钮引用
+            Debug.Log($"PlayerStatsPanel.ONStart: 获取技能按钮");
+            buttonE = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonE");
+            buttonQ = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj,"ButtonQ");
+            
+            Debug.Log($"PlayerStatsPanel.ONStart: buttonE={buttonE != null}, buttonQ={buttonQ != null}");
+            
+            // 尝试获取冷却时间文本（如果存在）
+            cooldownTextE = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj,"CooldownTextE");
+            cooldownTextQ = UImchud.GetInstance().GetOrAddComponent<TextMeshProUGUI>(ActiveObj,"CooldownTextQ");
+            
+            // 初始隐藏冷却文本
+            if(cooldownTextE != null)
+            {
+                cooldownTextE.gameObject.SetActive(false);
+            }
+            if(cooldownTextQ != null)
+            {
+                cooldownTextQ.gameObject.SetActive(false);
+            }
+            
+            // 获取武器 UI 组件
+            Debug.Log($"PlayerStatsPanel.ONStart: 获取武器UI组件");
+            weapon1Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 1");
+            weapon2Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 2");
+            weapon3Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 3");
+            
+            Debug.Log($"PlayerStatsPanel.ONStart: weapon1Rect={weapon1Rect != null}, weapon2Rect={weapon2Rect != null}, weapon3Rect={weapon3Rect != null}");
+            
+            // 保存原始位置到字典
+            if(weapon1Rect != null) weaponOriginalPositions["weapon 1"] = weapon1Rect.localPosition;
+            if(weapon2Rect != null) weaponOriginalPositions["weapon 2"] = weapon2Rect.localPosition;
+            if(weapon3Rect != null) weaponOriginalPositions["weapon 3"] = weapon3Rect.localPosition;
+            
+            // 初始化武器显示
+            Debug.Log($"PlayerStatsPanel.ONStart: 初始化武器显示");
+            UpdateWeaponDisplay();
+            
+            // 注册 Update 方法到游戏循环
+            Debug.Log($"PlayerStatsPanel.ONStart: 注册Update方法");
+            GameRoot.GetInstance().RegisterUpdateMethod(Update);
+            
+            Debug.Log($"PlayerStatsPanel.ONStart: ========== 初始化完成 ==========");
         }
-        if(cooldownTextQ != null)
+        catch(System.Exception e)
         {
-            cooldownTextQ.gameObject.SetActive(false);
+            Debug.LogError($"PlayerStatsPanel.ONStart: 初始化异常: {e.Message}");
+            Debug.LogError($"PlayerStatsPanel.ONStart: 异常堆栈: {e.StackTrace}");
         }
-        
-        // 获取武器 UI 组件
-        weapon1Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 1");
-        weapon2Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 2");
-        weapon3Rect = UImchud.GetInstance().GetOrAddComponent<RectTransform>(ActiveObj, "weapon 3");
-        
-        // 保存原始位置到字典
-        if(weapon1Rect != null) weaponOriginalPositions["weapon 1"] = weapon1Rect.localPosition;
-        if(weapon2Rect != null) weaponOriginalPositions["weapon 2"] = weapon2Rect.localPosition;
-        if(weapon3Rect != null) weaponOriginalPositions["weapon 3"] = weapon3Rect.localPosition;
-        
-        // 初始化武器显示
-        UpdateWeaponDisplay();
-        
-        // 注册 Update 方法到游戏循环
-        GameRoot.GetInstance().RegisterUpdateMethod(Update);
     }
     
     // 更新血量UI
