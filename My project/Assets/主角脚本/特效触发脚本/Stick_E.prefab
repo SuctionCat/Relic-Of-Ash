@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40667670a28f40b4b87a4c16a1cf1060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 50
+  damage: 45
   knockback: 5
   checkDistance: 0.4
   beamWidth: 2.5
