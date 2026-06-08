@@ -35,8 +35,8 @@ MonoBehaviour:
   scaleNoiseWithHeight: 0
   border: 0.05
   customHeight: 1
-  height: 27.5
-  verticalOffset: 0
+  height: 49.36
+  verticalOffset: 0.6
   distance: 0
   distanceFallOff: 0.93
   maxDistance: 10000
@@ -113,7 +113,7 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  brightness: 2.5
+  brightness: 2.78
   deepObscurance: 1.9
   specularColor: {r: 0.2679245, g: 0.2679245, b: 0.2679245, a: 1}
   specularThreshold: 0.817

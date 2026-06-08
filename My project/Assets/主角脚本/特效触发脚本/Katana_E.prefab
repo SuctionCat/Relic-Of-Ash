@@ -107,6 +107,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 50
   knockback: 5
-  checkDistance: 3
+  checkDistance: 0.4
   beamWidth: 4.5
   beamHeight: 0.39
