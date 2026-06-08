@@ -31,6 +31,10 @@ public class PlayerStatsPanel : BasePanel
     private TextMeshProUGUI cooldownTextE;
     private TextMeshProUGUI cooldownTextQ;
     
+    // 冷却遮罩图片
+    private Image cdImageE;
+    private Image cdImageQ;
+    
     // 武器切换相关
     private RectTransform weapon1Rect;
     private RectTransform weapon2Rect;
@@ -84,6 +88,20 @@ public PlayerStatsPanel():base(UIPanelType)
             if(cooldownTextQ != null)
             {
                 cooldownTextQ.gameObject.SetActive(false);
+            }
+            
+            // 获取冷却遮罩图片
+            cdImageE = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj,"CD_Image_E");
+            cdImageQ = UImchud.GetInstance().GetOrAddComponent<Image>(ActiveObj,"CD_Image_Q");
+            
+            // 初始化冷却遮罩填充量为0
+            if(cdImageE != null)
+            {
+                cdImageE.fillAmount = 0f;
+            }
+            if(cdImageQ != null)
+            {
+                cdImageQ.fillAmount = 0f;
             }
             
             // 获取武器 UI 组件
@@ -251,6 +269,7 @@ public PlayerStatsPanel():base(UIPanelType)
         
         // 更新技能E冷却
         float eCooldown = StateManager.instance.GetECooldownRemaining();
+        float eMaxCooldown = StateManager.instance.eCooldownTime;
         if(eCooldown > 0)
         {
             buttonE.interactable = false;
@@ -258,6 +277,11 @@ public PlayerStatsPanel():base(UIPanelType)
             {
                 cooldownTextE.text = Mathf.Ceil(eCooldown).ToString();
                 cooldownTextE.gameObject.SetActive(true);
+            }
+            // 设置冷却遮罩填充量
+            if(cdImageE != null && eMaxCooldown > 0)
+            {
+                cdImageE.fillAmount = eCooldown / eMaxCooldown;
             }
         }
         else
@@ -267,10 +291,16 @@ public PlayerStatsPanel():base(UIPanelType)
             {
                 cooldownTextE.gameObject.SetActive(false);
             }
+            // 重置冷却遮罩填充量为0
+            if(cdImageE != null)
+            {
+                cdImageE.fillAmount = 0f;
+            }
         }
         
         // 更新技能Q冷却
         float qCooldown = StateManager.instance.GetQCooldownRemaining();
+        float qMaxCooldown = StateManager.instance.qCooldownTime;
         if(qCooldown > 0)
         {
             buttonQ.interactable = false;
@@ -279,6 +309,11 @@ public PlayerStatsPanel():base(UIPanelType)
                 cooldownTextQ.text = Mathf.Ceil(qCooldown).ToString();
                 cooldownTextQ.gameObject.SetActive(true);
             }
+            // 设置冷却遮罩填充量
+            if(cdImageQ != null && qMaxCooldown > 0)
+            {
+                cdImageQ.fillAmount = qCooldown / qMaxCooldown;
+            }
         }
         else
         {
@@ -286,6 +321,11 @@ public PlayerStatsPanel():base(UIPanelType)
             if(cooldownTextQ != null)
             {
                 cooldownTextQ.gameObject.SetActive(false);
+            }
+            // 重置冷却遮罩填充量为0
+            if(cdImageQ != null)
+            {
+                cdImageQ.fillAmount = 0f;
             }
         }
     }
