@@ -13,10 +13,17 @@ public class StateManager : MonoBehaviour
     private int currentWeaponIndex;
     private string currentWeaponName;
 
+    [Header("护盾恢复")]
+    public float shieldRegenDelay = 5f;
+    public float shieldRegenRate = 10f;
+    private float lastDamageTime = float.MinValue;
+    private float lastHealth;
+    private float lastShield;
+
     [Header("技能冷却时间")]
     public float qCooldownTime = 2f;
     public float eCooldownTime = 3f;
-    
+
     private float qCooldownRemaining;
     private float eCooldownRemaining;
 
@@ -55,6 +62,9 @@ public class StateManager : MonoBehaviour
         qCooldownRemaining = 0f;
         eCooldownRemaining = 0f;
 
+        lastHealth = currentHealth;
+        lastShield = currentShield;
+
         if (GameRoot.GetInstance() != null)
         {
             GameRoot.GetInstance().RegisterStateManager();
@@ -64,6 +74,37 @@ public class StateManager : MonoBehaviour
     void Update()
     {
         UpdateCooldowns();
+        UpdateShieldRegen();
+        DetectDamage();
+    }
+
+    private void UpdateShieldRegen()
+    {
+        if (currentShield >= maxShield) return;
+        if (Time.time - lastDamageTime < shieldRegenDelay) return;
+
+        currentShield = Mathf.Min(currentShield + shieldRegenRate * Time.deltaTime, maxShield);
+    }
+
+    /// <summary>
+    /// 收到伤害时调用，重置护盾恢复计时器
+    /// </summary>
+    public void OnTakeDamage()
+    {
+        lastDamageTime = Time.time;
+    }
+
+    /// <summary>
+    /// 检测本帧血量或护盾是否降低，自动触发OnTakeDamage
+    /// </summary>
+    private void DetectDamage()
+    {
+        if (currentHealth < lastHealth || currentShield < lastShield)
+        {
+            OnTakeDamage();
+        }
+        lastHealth = currentHealth;
+        lastShield = currentShield;
     }
     
     private void UpdateCooldowns()
