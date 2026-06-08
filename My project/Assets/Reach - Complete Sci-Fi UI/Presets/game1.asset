@@ -35,7 +35,7 @@ MonoBehaviour:
   mentions:
   - ID: LOGO
     icon: {fileID: 21300000, guid: b412da4087a1848499c6051c3ae9993e, type: 3}
-    description: "\u5C60\u9F99\u8005\u7EC8\u6210\u6076\u9F99\uFF0C\u4F0A\u7538\u56ED\u91CC\uFF0C\u518D\u65E0\u4EBA\u7C7B"
+    description: 
     descriptionKey: 
     descriptionSpacing: 30
     layoutSpacing: 160
