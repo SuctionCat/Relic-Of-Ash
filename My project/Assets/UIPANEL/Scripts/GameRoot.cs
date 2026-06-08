@@ -129,6 +129,21 @@ public class GameRoot : MonoBehaviour
             }
             else if(actualSceneName == "MenuScene")
             {
+                bool hasQuitPanel = false;
+                foreach(var panel in UIManager_Root.stack_ui)
+                {
+                    if(panel.uiType.Name == "QuitPanel")
+                    {
+                        hasQuitPanel = true;
+                        break;
+                    }
+                }
+                if(hasQuitPanel)
+                {
+                    Debug.Log("检测到 ESC 键，关闭退出游戏面板");
+                    UIManager_Root.Pop(false);
+                    return;
+                }
                 Debug.Log("检测到 ESC 键，打开退出游戏面板");
                 UIManager_Root.Push(new QuitPanel());
             }
