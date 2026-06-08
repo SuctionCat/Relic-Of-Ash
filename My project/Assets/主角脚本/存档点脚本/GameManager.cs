@@ -82,6 +82,39 @@ public class GameManager : MonoBehaviour
         }
     }
     
+    public void TeleportToCheckpoint()
+    {
+        Debug.Log("传送玩家到检查点! 传送位置: " + spawnPoint);
+        
+        GameObject player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            CharacterController controller = player.GetComponent<CharacterController>();
+            
+            if (controller != null)
+            {
+                controller.enabled = false;
+            }
+            
+            if (spawnPoint == Vector3.zero)
+            {
+                Debug.LogWarning("GameManager: 未设置检查点位置，使用玩家当前位置");
+                spawnPoint = player.transform.position;
+            }
+            
+            player.transform.position = spawnPoint;
+            
+            if (controller != null)
+            {
+                controller.enabled = true;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("GameManager: 未找到玩家对象，无法传送");
+        }
+    }
+    
     private IEnumerator DelayedResetPlayerState(GameObject player)
     {
         yield return new WaitForEndOfFrame();

@@ -12,6 +12,7 @@ public class PausePanel : BasePanel
     private Button continueButton;
     private Button mainMenuButton;
     private Button settingsButton;
+    private Button breakDeadlockButton;
     
     private bool isPaused = false;
     private bool justOpened = false;
@@ -25,6 +26,7 @@ public class PausePanel : BasePanel
         continueButton = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj, "Continue");
         mainMenuButton = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj, "MainMenu");
         settingsButton = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj, "Settings");
+        breakDeadlockButton = UImchud.GetInstance().GetOrAddComponent<Button>(ActiveObj, "BreakDeadlock");
         
         if (continueButton != null)
         {
@@ -37,6 +39,10 @@ public class PausePanel : BasePanel
         if (settingsButton != null)
         {
             settingsButton.onClick.AddListener(SettingsButtonClick);
+        }
+        if (breakDeadlockButton != null)
+        {
+            breakDeadlockButton.onClick.AddListener(BreakDeadlockButtonClick);
         }
         
         CanvasGroup canvasGroup = UImchud.GetInstance().GetOrAddComponent<CanvasGroup>(ActiveObj);
@@ -71,6 +77,21 @@ public class PausePanel : BasePanel
     {
         AudioManager.PlayClick();
         GameRoot.GetInstance().UIManager_Root.Push(new SettingPanel());
+    }
+    
+    private void BreakDeadlockButtonClick()
+    {
+        AudioManager.PlayClick();
+        ResumeGame();
+        
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.TeleportToCheckpoint();
+        }
+        else
+        {
+            Debug.LogWarning("PausePanel: GameManager.Instance 为空，无法执行脱离卡死");
+        }
     }
     
     public void ResumeGame()
