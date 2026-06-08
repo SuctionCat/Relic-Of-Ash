@@ -10,8 +10,11 @@ public class EnemyHealth : MonoBehaviour
     private AudioSource audioSource; // 音频源组件
     private float originalVolume = 1f; // 原始音量
 
-    // 顿帧效果：静态标志位，确保多个敌人同时受击时只执行一次顿帧
-    private static bool isHitPauseRunning = false;
+    // 顿帧效果：静态时间戳，限制单位时间内只执行一次顿帧
+    private static float lastHitPauseTime = -999f;
+
+    [Tooltip("顿帧冷却时间（秒），在此时间窗口内多次受击只执行一次顿帧")]
+    public float hitPauseCooldown = 0.5f;
 
     // [重要] 请在Inspector面板中拖入你的粒子特效预制体
     public GameObject hitEffectPrefab;
@@ -194,15 +197,15 @@ public class EnemyHealth : MonoBehaviour
 
     private IEnumerator HitPauseCoroutine()
     {
-        // 如果已有顿帧在执行，则不重复执行
-        if (isHitPauseRunning)
+        // 使用 Time.realtimeSinceStartup 避免被 timeScale 影响
+        // 在冷却窗口内的多次受击只执行一次顿帧
+        if (Time.realtimeSinceStartup - lastHitPauseTime < hitPauseCooldown)
             yield break;
 
-        isHitPauseRunning = true;
+        lastHitPauseTime = Time.realtimeSinceStartup;
         Time.timeScale = hitPauseScale;
         yield return new WaitForSecondsRealtime(hitPauseDuration);
         Time.timeScale = 1.0f;
-        isHitPauseRunning = false;
     }
     private void DestroyEnemy()
     {
