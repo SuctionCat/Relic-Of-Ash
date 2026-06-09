@@ -347,6 +347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c67e5f254680a74e9cadc521011ea89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitPauseCooldown: 0.5
   hitEffectPrefab: {fileID: 0}
   hitSounds:
   - {fileID: 8300000, guid: 7990cc4ab86654c408bc8d584c39c2b4, type: 3}
